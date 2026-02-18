@@ -1,0 +1,35 @@
+# Dependencies
+node_modules/
+
+# Environment files (may contain secrets)
+.env
+.env.local
+.env.*.local
+
+# Auth data
+mcp-inflight-auth.json
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Logs
+*.log
+npm-debug.log*
+
+# Build output
+dist/
+build/
+*.tsbuildinfo
+
+# Lock files (let users generate their own)
+bun.lockb
+package-lock.json
+yarn.lock
+pnpm-lock.yaml

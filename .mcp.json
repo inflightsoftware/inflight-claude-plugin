@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "inflight-local": {
+      "type": "stdio",
+      "command": "bun",
+      "args": ["run", "${CLAUDE_PLUGIN_ROOT}/local-mcp/index.ts"],
+      "env": {
+        "INFLIGHT_URL": "https://vite.inflight.co",
+        "SHARE_API_URL": "https://share.inflight.co"
+      }
+    }
+  }
+}
