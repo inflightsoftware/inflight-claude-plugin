@@ -1,0 +1,12 @@
+{
+  "name": "inflight",
+  "description": "InFlight plugins for Claude Code",
+  "plugins": [
+    {
+      "name": "inflight",
+      "description": "Share and collaborate on UI prototypes via InFlight",
+      "version": "1.0.0",
+      "source": ".."
+    }
+  ]
+}
