@@ -24,9 +24,11 @@ Thumbs.db
 npm-debug.log*
 
 # Build output
-dist/
 build/
 *.tsbuildinfo
+
+# Keep plugin dist (bundled MCP server)
+!plugin/local-mcp/dist/
 
 # Lock files (let users generate their own)
 bun.lockb

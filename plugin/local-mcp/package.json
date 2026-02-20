@@ -3,15 +3,16 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "start": "npx tsx index.ts"
-  },
-  "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.26.0",
-    "tsx": "^4.7.0",
-    "zod": "^3.23.8"
+    "build": "esbuild index.ts --bundle --platform=node --format=esm --outfile=dist/index.js",
+    "start": "node dist/index.js"
   },
   "devDependencies": {
     "@types/node": "^20.11.17",
+    "esbuild": "^0.20.0",
     "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.26.0",
+    "zod": "^3.23.8"
   }
 }
