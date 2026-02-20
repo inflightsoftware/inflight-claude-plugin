@@ -6,7 +6,7 @@
       "args": ["${CLAUDE_PLUGIN_ROOT}/local-mcp/dist/index.js"],
       "env": {
         "INFLIGHT_URL": "https://vite.inflight.co",
-        "SHARE_API_URL": "https://share.inflight.co"
+        "SHARE_API_URL": "https://share-api.inflight.co"
       }
     }
   }
