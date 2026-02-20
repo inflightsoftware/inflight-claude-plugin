@@ -98,9 +98,10 @@ And these MCP tools (used internally by skills):
 ### Update the plugin
 
 ```bash
-claude plugin marketplace update inflight
-claude plugin install inflight
+claude plugin marketplace update inflight && claude plugin uninstall inflight && rm -rf ~/.claude/plugins/cache/inflight && claude plugin install inflight
 ```
+
+Then restart Claude Code (new terminal) to apply the changes.
 
 ## License
 
