@@ -20,22 +20,46 @@ import { getAuthData, isAuthenticated, authenticate, clearAuthData } from "./aut
 const SHARE_API_URL = process.env.SHARE_API_URL || "http://localhost:3002";
 
 // File patterns to exclude
+// Note: Directory patterns use (^|\/) to match both at root AND nested paths
+// This is critical for monorepos where node_modules, dist, etc. exist in subdirectories
 const EXCLUDE_PATTERNS = [
-  /^\.git\//,
-  /^node_modules\//,
-  /^\.next\//,
-  /^dist\//,
-  /^build\//,
-  /^out\//,
-  /^\.vercel\//,
-  /^\.turbo\//,
-  /^\.cache\//,
+  // Version control
+  /(^|\/)\.git\//,
+
+  // Dependencies - match anywhere in path (critical for monorepos)
+  /(^|\/)node_modules\//,
+
+  // Build outputs - match anywhere in path
+  /(^|\/)\.next\//,
+  /(^|\/)dist\//,
+  /(^|\/)build\//,
+  /(^|\/)out\//,
+  /(^|\/)\.output\//,      // Nuxt output
+  /(^|\/)\.svelte-kit\//,  // SvelteKit
+
+  // Cache directories - match anywhere in path
+  /(^|\/)\.vercel\//,
+  /(^|\/)\.turbo\//,
+  /(^|\/)\.cache\//,
+  /(^|\/)\.parcel-cache\//,
+  /(^|\/)\.vite\//,
+  /(^|\/)\.nuxt\//,
+  /(^|\/)\.expo\//,
+
+  // Lock files (root only is fine)
   /package-lock\.json$/,
   /yarn\.lock$/,
   /pnpm-lock\.yaml$/,
   /bun\.lockb$/,
+
+  // OS/editor files
   /\.DS_Store$/,
   /\.log$/,
+  /Thumbs\.db$/,
+
+  // Coverage and test outputs
+  /(^|\/)coverage\//,
+  /(^|\/)\.nyc_output\//,
 ];
 
 // Env files - excluded for security
