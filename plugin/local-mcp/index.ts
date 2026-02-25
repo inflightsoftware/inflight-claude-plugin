@@ -12,69 +12,22 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
 import { execSync } from "child_process";
-import { readFileSync, readdirSync, statSync, existsSync } from "fs";
-import { join, relative } from "path";
+import { readFileSync, existsSync } from "fs";
+import { join } from "path";
 import { getAuthData, isAuthenticated, authenticate, clearAuthData } from "./auth.js";
+import { analyzeProjectDependencies } from "./analyzers/dependency-analyzer.js";
+import {
+  needsChunkedUpload,
+  chunkFiles,
+  calculateTotalSize as calculateChunkTotalSize,
+  getChunkStats,
+  readProjectFiles,
+  readSpecificFiles,
+  type FileMap,
+} from "./utils/file-utils.js";
 
 // API URL - all share operations go through the share API
 const SHARE_API_URL = process.env.SHARE_API_URL || "http://localhost:3002";
-
-// File patterns to exclude
-// Note: Directory patterns use (^|\/) to match both at root AND nested paths
-// This is critical for monorepos where node_modules, dist, etc. exist in subdirectories
-const EXCLUDE_PATTERNS = [
-  // Version control
-  /(^|\/)\.git\//,
-
-  // Dependencies - match anywhere in path (critical for monorepos)
-  /(^|\/)node_modules\//,
-
-  // Build outputs - match anywhere in path
-  /(^|\/)\.next\//,
-  /(^|\/)dist\//,
-  /(^|\/)build\//,
-  /(^|\/)out\//,
-  /(^|\/)\.output\//,      // Nuxt output
-  /(^|\/)\.svelte-kit\//,  // SvelteKit
-
-  // Cache directories - match anywhere in path
-  /(^|\/)\.vercel\//,
-  /(^|\/)\.turbo\//,
-  /(^|\/)\.cache\//,
-  /(^|\/)\.parcel-cache\//,
-  /(^|\/)\.vite\//,
-  /(^|\/)\.nuxt\//,
-  /(^|\/)\.expo\//,
-
-  // Lock files (root only is fine)
-  /package-lock\.json$/,
-  /yarn\.lock$/,
-  /pnpm-lock\.yaml$/,
-  /bun\.lockb$/,
-
-  // OS/editor files
-  /\.DS_Store$/,
-  /\.log$/,
-  /Thumbs\.db$/,
-
-  // Coverage and test outputs
-  /(^|\/)coverage\//,
-  /(^|\/)\.nyc_output\//,
-];
-
-// Env files - excluded for security
-const ENV_PATTERNS = [/^\.env/, /\.env\./];
-
-function shouldExclude(filePath: string): boolean {
-  if (EXCLUDE_PATTERNS.some(pattern => pattern.test(filePath))) {
-    return true;
-  }
-  const fileName = filePath.split('/').pop() || '';
-  if (ENV_PATTERNS.some(pattern => pattern.test(fileName))) {
-    return true;
-  }
-  return false;
-}
 
 /**
  * Open a URL in the default browser
@@ -97,38 +50,6 @@ function openInBrowser(url: string): void {
   } catch {
     // Silently fail - URL opening is nice-to-have, not critical
   }
-}
-
-/**
- * Recursively read all files in a directory
- */
-function readProjectFiles(rootDir: string): Record<string, string> {
-  const files: Record<string, string> = {};
-
-  function walkDir(dir: string) {
-    const entries = readdirSync(dir);
-    for (const entry of entries) {
-      const fullPath = join(dir, entry);
-      const relativePath = relative(rootDir, fullPath);
-
-      if (shouldExclude(relativePath)) continue;
-
-      const stat = statSync(fullPath);
-      if (stat.isDirectory()) {
-        walkDir(fullPath);
-      } else if (stat.isFile()) {
-        try {
-          const content = readFileSync(fullPath, 'utf-8');
-          files[relativePath] = content;
-        } catch {
-          // Skip files that can't be read as text (binary files)
-        }
-      }
-    }
-  }
-
-  walkDir(rootDir);
-  return files;
 }
 
 /**
@@ -191,13 +112,6 @@ function getGitInfo(dir: string): {
   } catch {
     return { isGitRepo: true };
   }
-}
-
-/**
- * Calculate total size of files
- */
-function calculateTotalSize(files: Record<string, string>): number {
-  return Object.values(files).reduce((sum, content) => sum + content.length, 0);
 }
 
 // ============= Share API Client =============
@@ -366,6 +280,49 @@ server.tool(
   }
 );
 
+// Tool: Analyze dependencies for partial share
+server.tool(
+  "analyze_dependencies",
+  "Analyze dependency graph for changed files to prepare for partial share. Uses esbuild to quickly resolve all imports and returns local files, npm packages, and workspace packages needed.",
+  {
+    projectPath: z.string().describe("Absolute path to the project root directory"),
+    changedFiles: z.array(z.string()).optional().describe("Array of changed file paths relative to project root. Auto-detected from git diff if not provided."),
+    baseBranch: z.string().optional().describe("Base branch to diff against (default: main or master)"),
+  },
+  async (args) => {
+    console.error(`[Local MCP] Analyzing dependencies for: ${args.projectPath}`);
+
+    try {
+      const result = await analyzeProjectDependencies(
+        args.projectPath,
+        args.changedFiles,
+        args.baseBranch
+      );
+
+      console.error(`[Local MCP] Analysis complete in ${result.metadata.analysisTimeMs}ms`);
+      console.error(`[Local MCP]   Changed files: ${result.changedFiles.length}`);
+      console.error(`[Local MCP]   Entry points: ${result.metadata.entryPoints.length}`);
+      console.error(`[Local MCP]   Local files: ${result.dependencies.localFiles.length}`);
+      console.error(`[Local MCP]   NPM packages: ${result.dependencies.npmPackages.length}`);
+      console.error(`[Local MCP]   Workspace packages: ${result.dependencies.workspacePackages.length}`);
+
+      return {
+        content: [{
+          type: "text" as const,
+          text: JSON.stringify(result, null, 2),
+        }],
+      };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      console.error(`[Local MCP] Analysis failed: ${message}`);
+      return {
+        content: [{ type: "text" as const, text: `Error: ${message}` }],
+        isError: true,
+      };
+    }
+  }
+);
+
 // Tool: Share - uploads to cloud sandbox, runs Claude analysis, creates InFlight version
 server.tool(
   "share",
@@ -374,6 +331,7 @@ server.tool(
     directory: z.string().optional().describe("Project directory (defaults to cwd)"),
     workspaceId: z.string().optional().describe("InFlight workspace ID"),
     existingProjectId: z.string().optional().describe("Add version to existing project"),
+    useStaticAnalysis: z.boolean().optional().describe("Use static dependency analysis to upload only relevant files (experimental, default: false)"),
   },
   async (args, extra) => {
     const dir = args.directory || process.cwd();
@@ -454,13 +412,50 @@ server.tool(
     await log(`  Branch: ${gitInfo.currentBranch} vs ${gitInfo.baseBranch}`);
     await log(`  Diff size: ${gitInfo.diff.length} bytes`);
 
-    // Step 3: Read project files
-    await sendProgress(8, 100, "Reading project files...");
-    const files = readProjectFiles(dir);
+    // Step 3: Read project files (optionally use static dependency analysis)
+    let files: FileMap;
+    let usedStaticAnalysis = false;
+
+    if (args.useStaticAnalysis) {
+      // Experimental: Use static dependency analysis to upload only relevant files
+      await sendProgress(8, 100, "Analyzing dependencies...");
+      try {
+        const analysisResult = await analyzeProjectDependencies(dir, undefined, gitInfo.baseBranch);
+        const localFiles = analysisResult.dependencies.localFiles;
+
+        await log(`  Analysis completed in ${analysisResult.metadata.analysisTimeMs}ms`);
+        await log(`  Changed files: ${analysisResult.changedFiles.length}`);
+        await log(`  UI-relevant entry points: ${analysisResult.metadata.entryPoints.length}`);
+        await log(`  Local dependencies: ${localFiles.length}`);
+        await log(`  NPM packages: ${analysisResult.dependencies.npmPackages.length}`);
+
+        if (localFiles.length > 0) {
+          await sendProgress(10, 100, `Reading ${localFiles.length} analyzed files...`);
+          files = readSpecificFiles(dir, localFiles, true, true);
+          usedStaticAnalysis = true;
+          await log(`  Using static analysis: ${Object.keys(files).length} files to upload`);
+        } else {
+          await log(`  No UI-relevant dependencies found, falling back to full upload`);
+          await sendProgress(10, 100, "Reading all project files...");
+          files = readProjectFiles(dir, true);
+        }
+      } catch (analysisError) {
+        const errorMsg = analysisError instanceof Error ? analysisError.message : String(analysisError);
+        await log(`  Static analysis failed: ${errorMsg}`, "warning");
+        await log(`  Falling back to full project upload`);
+        await sendProgress(10, 100, "Reading all project files...");
+        files = readProjectFiles(dir, true);
+      }
+    } else {
+      // Default: Read all project files
+      await sendProgress(8, 100, "Reading project files...");
+      files = readProjectFiles(dir, true);
+    }
+
     const fileCount = Object.keys(files).length;
-    const totalSize = calculateTotalSize(files);
+    const totalSize = calculateChunkTotalSize(files);
     const sizeMB = (totalSize / (1024 * 1024)).toFixed(2);
-    await log(`  Found ${fileCount} files (${sizeMB} MB)`);
+    await log(`  ${usedStaticAnalysis ? "Analyzed" : "Found"} ${fileCount} files (${sizeMB} MB)`);
 
     // Step 4: Check auth
     let authData = getAuthData();
@@ -481,7 +476,76 @@ server.tool(
       await log(`  Using cached auth for ${authData.email || authData.userId}`);
     }
 
-    // Step 5: Call consolidated /share endpoint with SSE streaming
+    // Step 5: Check if chunked upload is needed
+    const filesAsFileMap = files as FileMap;
+    const useChunkedUpload = needsChunkedUpload(filesAsFileMap);
+
+    if (useChunkedUpload) {
+      await log(`  Large project detected (${sizeMB} MB), using chunked upload...`);
+      await sendProgress(12, 100, "Large project - using chunked upload...");
+
+      try {
+        const result = await callChunkedShare(
+          filesAsFileMap,
+          {
+            diff: gitInfo.diff,
+            diffStat: gitInfo.diffStat || '',
+            baseBranch: gitInfo.baseBranch || 'main',
+            currentBranch: gitInfo.currentBranch || 'unknown',
+          },
+          authData.apiKey,
+          args.workspaceId,
+          args.existingProjectId,
+          gitInfo.gitUrl,
+          async (percentage: number, step: string) => {
+            await log(`[${percentage}%] ${step}`);
+            await sendProgress(percentage, 100, step);
+          },
+          async (message) => {
+            await log(`Server error: ${message}`, "error");
+          }
+        );
+
+        await sendProgress(100, 100, "Share complete!");
+        await log("========== SUCCESS ==========");
+        await log(`Preview URL: ${result.previewUrl}`);
+        await log(`InFlight URL: ${result.inflightUrl}`);
+
+        openInBrowser(result.inflightUrl);
+        await log("Opening InFlight in browser...");
+
+        return {
+          content: [{
+            type: "text" as const,
+            text: JSON.stringify({
+              success: true,
+              previewUrl: result.previewUrl,
+              sandboxUrl: result.sandboxUrl,
+              sandboxId: result.sandboxId,
+              inflightUrl: result.inflightUrl,
+              versionId: result.versionId,
+              projectId: result.projectId,
+              fileCount,
+              chunkedUpload: true,
+            }, null, 2),
+          }],
+        };
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        await log("========== ERROR ==========", "error");
+        await log(message, "error");
+
+        return {
+          content: [{
+            type: "text" as const,
+            text: `Error: ${message}`,
+          }],
+          isError: true,
+        };
+      }
+    }
+
+    // Step 5b: Standard upload (< 3MB)
     await sendProgress(12, 100, "Starting share on server...");
 
     try {
@@ -671,6 +735,166 @@ async function callShareWithSSE(
   }
 
   throw new Error("Share stream ended without completion");
+}
+
+/**
+ * Call chunked share endpoints for large projects (> 3MB)
+ */
+interface GitDiffInfo {
+  diff: string;
+  diffStat: string;
+  baseBranch: string;
+  currentBranch: string;
+}
+
+async function callChunkedShare(
+  files: FileMap,
+  gitDiff: GitDiffInfo,
+  apiKey: string,
+  workspaceId: string | undefined,
+  existingProjectId: string | undefined,
+  gitUrl: string | undefined,
+  onProgress: (percentage: number, step: string) => Promise<void>,
+  onError: (message: string) => Promise<void>
+): Promise<ShareResult> {
+  const chunks = chunkFiles(files);
+  const stats = getChunkStats(chunks);
+
+  await onProgress(5, `Splitting into ${stats.totalChunks} chunks...`);
+
+  // Step 1: Initialize chunked upload
+  await onProgress(8, "Initializing chunked upload...");
+  const initResponse = await fetch(`${SHARE_API_URL}/share/chunked/init`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify({
+      gitDiff,
+      totalChunks: stats.totalChunks,
+      totalFiles: stats.totalFiles,
+      totalSize: stats.totalSize,
+    }),
+  });
+
+  if (!initResponse.ok) {
+    const errorText = await initResponse.text();
+    throw new Error(`Failed to initialize chunked upload: ${errorText}`);
+  }
+
+  const { sessionId, sandboxId } = await initResponse.json();
+  console.error(`[Local MCP] Chunked upload session: ${sessionId}, sandbox: ${sandboxId}`);
+
+  // Step 2: Upload chunks sequentially
+  for (let i = 0; i < chunks.length; i++) {
+    const chunk = chunks[i];
+    const chunkFileCount = Object.keys(chunk).length;
+    const chunkProgress = 10 + Math.floor((i / chunks.length) * 30); // 10-40%
+
+    await onProgress(chunkProgress, `Uploading chunk ${i + 1}/${chunks.length} (${chunkFileCount} files)...`);
+
+    const uploadResponse = await fetch(`${SHARE_API_URL}/share/chunked/${sessionId}/upload`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({
+        files: chunk,
+        chunkIndex: i,
+        totalChunks: chunks.length,
+      }),
+    });
+
+    if (!uploadResponse.ok) {
+      const errorText = await uploadResponse.text();
+      throw new Error(`Failed to upload chunk ${i + 1}: ${errorText}`);
+    }
+
+    const uploadResult = await uploadResponse.json();
+    console.error(`[Local MCP] Chunk ${i + 1} uploaded: ${uploadResult.uploaded} files`);
+  }
+
+  // Step 3: Finalize and get SSE stream
+  await onProgress(42, "Finalizing upload and starting analysis...");
+
+  const finalizeResponse = await fetch(`${SHARE_API_URL}/share/chunked/${sessionId}/finalize`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "text/event-stream",
+      Authorization: `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify({
+      workspaceId,
+      existingProjectId,
+      gitUrl,
+    }),
+  });
+
+  if (!finalizeResponse.ok) {
+    const errorText = await finalizeResponse.text();
+    throw new Error(`Failed to finalize chunked upload: ${errorText}`);
+  }
+
+  // Process SSE stream (same as callShareWithSSE)
+  const reader = finalizeResponse.body?.getReader();
+  if (!reader) {
+    throw new Error("No response body");
+  }
+
+  const decoder = new TextDecoder();
+  let buffer = "";
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+
+    buffer += decoder.decode(value, { stream: true });
+    const lines = buffer.split("\n");
+    buffer = lines.pop() || "";
+
+    let currentEvent = "";
+    for (const line of lines) {
+      if (line.startsWith("event: ")) {
+        currentEvent = line.slice(7).trim();
+      } else if (line.startsWith("data: ")) {
+        try {
+          const data = JSON.parse(line.slice(6));
+
+          if (currentEvent === "progress" || (!currentEvent && data.step)) {
+            // Remap server progress (5-100) to our range (45-100)
+            const serverPct = data.percentage || 0;
+            const mappedPct = 45 + Math.floor((serverPct / 100) * 55);
+            await onProgress(mappedPct, data.step || "Processing...");
+          } else if (currentEvent === "complete") {
+            return {
+              inflightUrl: data.inflightUrl,
+              versionId: data.versionId,
+              projectId: data.projectId,
+              sandboxId: data.sandboxId,
+              sandboxUrl: data.sandboxUrl,
+              previewUrl: data.previewUrl || data.sandboxUrl,
+              ngrokUrl: data.ngrokUrl,
+              diffSummary: data.diffSummary,
+            };
+          } else if (currentEvent === "error") {
+            await onError(data.message || "Share failed");
+            throw new Error(data.message || "Share failed");
+          }
+        } catch (e) {
+          if (e instanceof Error && e.message !== "Share failed") {
+            continue;
+          }
+          throw e;
+        }
+        currentEvent = "";
+      }
+    }
+  }
+
+  throw new Error("Chunked share stream ended without completion");
 }
 
 // Start the server
