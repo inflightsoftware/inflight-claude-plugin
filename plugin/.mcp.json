@@ -5,12 +5,12 @@
       "command": "node",
       "args": ["${CLAUDE_PLUGIN_ROOT}/local-mcp/dist/index.js"],
       "env": {
+        "INFLIGHT_URL": "https://inflight.co",
+        "SHARE_API_URL": "https://share-api.inflight.co"
+      },
+      "_env_local": {
         "INFLIGHT_URL": "http://localhost:3000",
         "SHARE_API_URL": "http://localhost:3002"
-      },
-      "_env_production": {
-        "INFLIGHT_URL": "https://vite.inflight.co",
-        "SHARE_API_URL": "https://share-api.inflight.co"
       }
     }
   }
