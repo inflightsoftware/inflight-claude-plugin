@@ -26,8 +26,16 @@ import {
   type FileMap,
 } from "./utils/file-utils.js";
 
-// API URL - all share operations go through the share API
-const SHARE_API_URL = process.env.SHARE_API_URL || "http://localhost:3002";
+// Environment-based URL configuration
+// Set INFLIGHT_ENV=local in .mcp.json to use local dev servers
+const ENVIRONMENTS = {
+  local: { shareApi: "http://localhost:3002" },
+  staging: { shareApi: "https://share-api-staging-2762.up.railway.app" },
+  production: { shareApi: "https://share-api.inflight.co" },
+} as const;
+
+const ENV = (process.env.INFLIGHT_ENV || "production") as keyof typeof ENVIRONMENTS;
+const SHARE_API_URL = process.env.SHARE_API_URL || ENVIRONMENTS[ENV].shareApi;
 
 /**
  * Open a URL in the default browser
