@@ -21014,7 +21014,13 @@ var AUTH_FILE = path.join(
   ".claude",
   "mcp-inflight-auth.json"
 );
-var INFLIGHT_BASE = process.env.INFLIGHT_URL || "https://vite.inflight.co";
+var AUTH_ENVIRONMENTS = {
+  local: { inflightUrl: "http://localhost:5173" },
+  staging: { inflightUrl: "https://staging.inflight.co" },
+  production: { inflightUrl: "https://inflight.co" }
+};
+var AUTH_ENV = process.env.INFLIGHT_ENV || "production";
+var INFLIGHT_BASE = process.env.INFLIGHT_URL || AUTH_ENVIRONMENTS[AUTH_ENV].inflightUrl;
 function getAuthData() {
   try {
     const content = fs.readFileSync(AUTH_FILE, "utf-8");
@@ -21885,7 +21891,13 @@ function readSpecificFiles(rootDir, filePaths, includeEssentials = true, debug =
 }
 
 // index.ts
-var SHARE_API_URL = process.env.SHARE_API_URL || "http://localhost:3002";
+var ENVIRONMENTS = {
+  local: { shareApi: "http://localhost:3002" },
+  staging: { shareApi: "https://share-api-staging-2762.up.railway.app" },
+  production: { shareApi: "https://share-api.inflight.co" }
+};
+var ENV = process.env.INFLIGHT_ENV || "production";
+var SHARE_API_URL = process.env.SHARE_API_URL || ENVIRONMENTS[ENV].shareApi;
 function openInBrowser(url) {
   try {
     const platform = process.platform;

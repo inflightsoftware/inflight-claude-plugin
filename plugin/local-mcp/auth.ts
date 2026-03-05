@@ -31,9 +31,15 @@ const AUTH_FILE = path.join(
   "mcp-inflight-auth.json"
 );
 
-// InFlight web app URL (can be overridden via environment)
-// Defaults to production; use INFLIGHT_URL=http://localhost:5173 for local dev
-const INFLIGHT_BASE = process.env.INFLIGHT_URL || "https://vite.inflight.co";
+// Environment-based URL configuration
+const AUTH_ENVIRONMENTS = {
+  local: { inflightUrl: "http://localhost:5173" },
+  staging: { inflightUrl: "https://staging.inflight.co" },
+  production: { inflightUrl: "https://inflight.co" },
+} as const;
+
+const AUTH_ENV = (process.env.INFLIGHT_ENV || "production") as keyof typeof AUTH_ENVIRONMENTS;
+const INFLIGHT_BASE = process.env.INFLIGHT_URL || AUTH_ENVIRONMENTS[AUTH_ENV].inflightUrl;
 
 /**
  * Stored authentication data
