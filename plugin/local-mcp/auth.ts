@@ -33,8 +33,8 @@ const AUTH_FILE = path.join(
 
 // Environment-based URL configuration
 const AUTH_ENVIRONMENTS = {
-  local: { inflightUrl: "http://localhost:3000" },
-  staging: { inflightUrl: "https://inflight.co" },
+  local: { inflightUrl: "http://localhost:5173" },
+  staging: { inflightUrl: "https://staging.inflight.co" },
   production: { inflightUrl: "https://inflight.co" },
 } as const;
 

@@ -21015,8 +21015,8 @@ var AUTH_FILE = path.join(
   "mcp-inflight-auth.json"
 );
 var AUTH_ENVIRONMENTS = {
-  local: { inflightUrl: "http://localhost:3000" },
-  staging: { inflightUrl: "https://inflight.co" },
+  local: { inflightUrl: "http://localhost:5173" },
+  staging: { inflightUrl: "https://staging.inflight.co" },
   production: { inflightUrl: "https://inflight.co" }
 };
 var AUTH_ENV = process.env.INFLIGHT_ENV || "production";
