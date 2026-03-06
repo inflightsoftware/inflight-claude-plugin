@@ -25,6 +25,7 @@ import {
   readSpecificFiles,
   type FileMap,
 } from "./utils/file-utils.js";
+import { toFriendlyMessage, resetMessageState } from "./utils/progress-messages.js";
 
 // Environment-based URL configuration
 // Set INFLIGHT_ENV=local in .mcp.json to use local dev servers
@@ -347,26 +348,34 @@ server.tool(
     // Get progressToken from _meta - required for progress notifications to show in Claude Code
     const progressToken = (extra as any)._meta?.progressToken;
 
+    // Reset friendly message deduplication state for this share operation
+    resetMessageState();
+
     // Helper to send progress notifications to MCP client
-    // This shows real-time progress in the user's Claude Code window
+    // Logs the raw message for debugging, but shows a friendly version to the user
     const sendProgress = async (progress: number, total: number, message?: string) => {
       if (message) {
-        await log(message);
+        // Always log the raw technical message to stderr for debugging
+        await log(`[${progress}%] ${message}`);
       }
 
-      if (progressToken && extra.sendNotification) {
-        try {
-          await extra.sendNotification({
-            method: "notifications/progress",
-            params: {
-              progressToken,
-              progress,
-              total,
-              ...(message && { message }),
-            },
-          });
-        } catch {
-          // Ignore errors sending progress
+      if (message && progressToken && extra.sendNotification) {
+        // Map to a friendly user-facing message (with deduplication)
+        const friendly = toFriendlyMessage(progress, message);
+        if (friendly) {
+          try {
+            await extra.sendNotification({
+              method: "notifications/progress",
+              params: {
+                progressToken,
+                progress,
+                total,
+                message: friendly,
+              },
+            });
+          } catch {
+            // Ignore errors sending progress
+          }
         }
       }
     };
@@ -420,55 +429,10 @@ server.tool(
     await log(`  Branch: ${gitInfo.currentBranch} vs ${gitInfo.baseBranch}`);
     await log(`  Diff size: ${gitInfo.diff.length} bytes`);
 
-    // Step 3: Read project files (optionally use static dependency analysis)
-    let files: FileMap;
-    let usedStaticAnalysis = false;
-
-    if (args.useStaticAnalysis) {
-      // Experimental: Use static dependency analysis to upload only relevant files
-      await sendProgress(8, 100, "Analyzing dependencies...");
-      try {
-        const analysisResult = await analyzeProjectDependencies(dir, undefined, gitInfo.baseBranch);
-        const localFiles = analysisResult.dependencies.localFiles;
-
-        await log(`  Analysis completed in ${analysisResult.metadata.analysisTimeMs}ms`);
-        await log(`  Changed files: ${analysisResult.changedFiles.length}`);
-        await log(`  UI-relevant entry points: ${analysisResult.metadata.entryPoints.length}`);
-        await log(`  Local dependencies: ${localFiles.length}`);
-        await log(`  NPM packages: ${analysisResult.dependencies.npmPackages.length}`);
-
-        if (localFiles.length > 0) {
-          await sendProgress(10, 100, `Reading ${localFiles.length} analyzed files...`);
-          files = readSpecificFiles(dir, localFiles, true, true);
-          usedStaticAnalysis = true;
-          await log(`  Using static analysis: ${Object.keys(files).length} files to upload`);
-        } else {
-          await log(`  No UI-relevant dependencies found, falling back to full upload`);
-          await sendProgress(10, 100, "Reading all project files...");
-          files = readProjectFiles(dir, true);
-        }
-      } catch (analysisError) {
-        const errorMsg = analysisError instanceof Error ? analysisError.message : String(analysisError);
-        await log(`  Static analysis failed: ${errorMsg}`, "warning");
-        await log(`  Falling back to full project upload`);
-        await sendProgress(10, 100, "Reading all project files...");
-        files = readProjectFiles(dir, true);
-      }
-    } else {
-      // Default: Read all project files
-      await sendProgress(8, 100, "Reading project files...");
-      files = readProjectFiles(dir, true);
-    }
-
-    const fileCount = Object.keys(files).length;
-    const totalSize = calculateChunkTotalSize(files);
-    const sizeMB = (totalSize / (1024 * 1024)).toFixed(2);
-    await log(`  ${usedStaticAnalysis ? "Analyzed" : "Found"} ${fileCount} files (${sizeMB} MB)`);
-
-    // Step 4: Check auth
+    // Step 3: Check auth (moved before file reading to enable clone check)
     let authData = getAuthData();
     if (!authData) {
-      await sendProgress(10, 100, "Authenticating with InFlight...");
+      await sendProgress(8, 100, "Authenticating with InFlight...");
       try {
         authData = await authenticate((msg) => log(msg));
         await log(`  Authenticated as ${authData.email || authData.userId}`);
@@ -483,6 +447,146 @@ server.tool(
     } else {
       await log(`  Using cached auth for ${authData.email || authData.userId}`);
     }
+
+    // Step 3b: Check if git clone mode is available (skip file upload if so)
+    let useGitClone = false;
+    let githubAppTip: string | null = null;
+    if (gitInfo.gitUrl && args.workspaceId) {
+      try {
+        await sendProgress(9, 100, "Checking repository access...");
+        const checkResponse = await fetch(`${SHARE_API_URL}/share/check-clone`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${authData.apiKey}`,
+          },
+          body: JSON.stringify({
+            gitUrl: gitInfo.gitUrl,
+            workspaceId: args.workspaceId,
+          }),
+        });
+        if (checkResponse.ok) {
+          const checkResult = await checkResponse.json() as { cloneAvailable: boolean };
+          useGitClone = checkResult.cloneAvailable === true;
+          if (useGitClone) {
+            await log(`  Git clone available for ${gitInfo.gitUrl}`);
+          } else if (gitInfo.gitUrl.includes("github.com")) {
+            // GitHub repo detected but no app installed - include tip in final result
+            await log(`  GitHub repo detected but InFlight GitHub App not installed for this workspace`);
+            githubAppTip = "Tip: Install the InFlight GitHub App to make sharing faster. Instead of uploading files, InFlight can clone your repo directly. Install it here: https://github.com/apps/inflight-app/installations/new";
+          }
+        }
+      } catch {
+        await log(`  Clone check failed, falling back to file upload`);
+      }
+    }
+
+    if (useGitClone) {
+      // Clone-based share: skip file reading/upload entirely
+      await sendProgress(10, 100, "Git clone available, skipping file upload...");
+
+      try {
+        const result = await callCloneShareWithSSE(
+          {
+            gitDiff: {
+              diff: gitInfo.diff,
+              diffStat: gitInfo.diffStat || '',
+              baseBranch: gitInfo.baseBranch || 'main',
+              currentBranch: gitInfo.currentBranch || 'unknown',
+            },
+            gitUrl: gitInfo.gitUrl!,
+            currentBranch: gitInfo.currentBranch || 'unknown',
+            workspaceId: args.workspaceId!,
+            existingProjectId: args.existingProjectId,
+          },
+          authData.apiKey,
+          // Remap server percentages (0-100) to our range (10-100)
+          // so progress never jumps backwards after local steps reach 10%
+          async (percentage: number, step: string) => {
+            const remapped = 10 + Math.floor((percentage / 100) * 90);
+            await sendProgress(remapped, 100, step);
+          },
+          async (message: string) => {
+            await log(`Server error: ${message}`, "error");
+          }
+        );
+
+        await sendProgress(100, 100, "Share complete!");
+        await log("========== SUCCESS (clone mode) ==========");
+        await log(`Preview URL: ${result.previewUrl}`);
+        await log(`InFlight URL: ${result.inflightUrl}`);
+
+        openInBrowser(result.inflightUrl);
+        await log("Opening InFlight in browser...");
+
+        return {
+          content: [{
+            type: "text" as const,
+            text: JSON.stringify({
+              success: true,
+              previewUrl: result.previewUrl,
+              sandboxUrl: result.sandboxUrl,
+              sandboxId: result.sandboxId,
+              inflightUrl: result.inflightUrl,
+              versionId: result.versionId,
+              projectId: result.projectId,
+              cloneMode: true,
+              diffSummary: result.diffSummary,
+            }, null, 2),
+          }],
+        };
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        await log(`Clone share failed: ${message}`, "warning");
+        await log(`Falling back to file upload...`);
+        // Fall through to standard file upload below
+      }
+    }
+
+    // Step 4: Read project files (skipped if clone succeeded above)
+    let files: FileMap;
+    let usedStaticAnalysis = false;
+
+    if (args.useStaticAnalysis) {
+      // Experimental: Use static dependency analysis to upload only relevant files
+      await sendProgress(10, 100, "Analyzing dependencies...");
+      try {
+        const analysisResult = await analyzeProjectDependencies(dir, undefined, gitInfo.baseBranch);
+        const localFiles = analysisResult.dependencies.localFiles;
+
+        await log(`  Analysis completed in ${analysisResult.metadata.analysisTimeMs}ms`);
+        await log(`  Changed files: ${analysisResult.changedFiles.length}`);
+        await log(`  UI-relevant entry points: ${analysisResult.metadata.entryPoints.length}`);
+        await log(`  Local dependencies: ${localFiles.length}`);
+        await log(`  NPM packages: ${analysisResult.dependencies.npmPackages.length}`);
+
+        if (localFiles.length > 0) {
+          await sendProgress(11, 100, `Reading ${localFiles.length} analyzed files...`);
+          files = readSpecificFiles(dir, localFiles, true, true);
+          usedStaticAnalysis = true;
+          await log(`  Using static analysis: ${Object.keys(files).length} files to upload`);
+        } else {
+          await log(`  No UI-relevant dependencies found, falling back to full upload`);
+          await sendProgress(11, 100, "Reading all project files...");
+          files = readProjectFiles(dir, true);
+        }
+      } catch (analysisError) {
+        const errorMsg = analysisError instanceof Error ? analysisError.message : String(analysisError);
+        await log(`  Static analysis failed: ${errorMsg}`, "warning");
+        await log(`  Falling back to full project upload`);
+        await sendProgress(11, 100, "Reading all project files...");
+        files = readProjectFiles(dir, true);
+      }
+    } else {
+      // Default: Read all project files
+      await sendProgress(10, 100, "Reading project files...");
+      files = readProjectFiles(dir, true);
+    }
+
+    const fileCount = Object.keys(files).length;
+    const totalSize = calculateChunkTotalSize(files);
+    const sizeMB = (totalSize / (1024 * 1024)).toFixed(2);
+    await log(`  ${usedStaticAnalysis ? "Analyzed" : "Found"} ${fileCount} files (${sizeMB} MB)`);
 
     // Step 5: Check if chunked upload is needed
     const filesAsFileMap = files as FileMap;
@@ -506,7 +610,6 @@ server.tool(
           args.existingProjectId,
           gitInfo.gitUrl,
           async (percentage: number, step: string) => {
-            await log(`[${percentage}%] ${step}`);
             await sendProgress(percentage, 100, step);
           },
           async (message) => {
@@ -535,6 +638,7 @@ server.tool(
               projectId: result.projectId,
               fileCount,
               chunkedUpload: true,
+              ...(githubAppTip && { githubAppTip }),
             }, null, 2),
           }],
         };
@@ -572,12 +676,11 @@ server.tool(
           gitUrl: gitInfo.gitUrl,
         },
         authData.apiKey,
-        // Progress callback - called for each SSE progress event
+        // Progress callback - remap server percentages (0-100) to our range (12-100)
+        // so progress never jumps backwards after local steps reach 12%
         async (percentage: number, step: string) => {
-          // Log with percentage prefix for visibility (matches original inflight implementation)
-          await log(`[${percentage}%] ${step}`);
-          // Send MCP progress notification
-          await sendProgress(percentage, 100, step);
+          const remapped = 12 + Math.floor((percentage / 100) * 88);
+          await sendProgress(remapped, 100, step);
         },
         // Error callback
         async (message) => {
@@ -611,6 +714,7 @@ server.tool(
             projectId: result.projectId,
             fileCount,
             diffSummary: result.diffSummary,
+            ...(githubAppTip && { githubAppTip }),
           }, null, 2),
         }],
       };
@@ -743,6 +847,103 @@ async function callShareWithSSE(
   }
 
   throw new Error("Share stream ended without completion");
+}
+
+/**
+ * Call the /share/clone endpoint with SSE streaming (git clone-based share)
+ */
+interface CloneShareRequest {
+  gitDiff: {
+    diff: string;
+    diffStat: string;
+    baseBranch: string;
+    currentBranch: string;
+  };
+  gitUrl: string;
+  currentBranch: string;
+  workspaceId: string;
+  existingProjectId?: string;
+}
+
+async function callCloneShareWithSSE(
+  request: CloneShareRequest,
+  apiKey: string,
+  onProgress: (percentage: number, step: string) => Promise<void>,
+  onError: (message: string) => Promise<void>
+): Promise<ShareResult> {
+  const url = `${SHARE_API_URL}/share/clone`;
+
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "text/event-stream",
+      Authorization: `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify(request),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Clone share failed (${response.status}): ${errorText || "Empty response"}`);
+  }
+
+  // Process SSE stream (same as callShareWithSSE)
+  const reader = response.body?.getReader();
+  if (!reader) {
+    throw new Error("No response body");
+  }
+
+  const decoder = new TextDecoder();
+  let buffer = "";
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+
+    buffer += decoder.decode(value, { stream: true });
+    const lines = buffer.split("\n");
+    buffer = lines.pop() || "";
+
+    let currentEvent = "";
+    for (const line of lines) {
+      if (line.startsWith("event: ")) {
+        currentEvent = line.slice(7).trim();
+      } else if (line.startsWith("data: ")) {
+        try {
+          const data = JSON.parse(line.slice(6));
+
+          if (currentEvent === "progress" || (!currentEvent && data.step)) {
+            const pct = data.percentage || 0;
+            const step = data.step || "Processing...";
+            await onProgress(pct, step);
+          } else if (currentEvent === "complete") {
+            return {
+              inflightUrl: data.inflightUrl,
+              versionId: data.versionId,
+              projectId: data.projectId,
+              sandboxId: data.sandboxId,
+              sandboxUrl: data.sandboxUrl,
+              previewUrl: data.previewUrl || data.sandboxUrl,
+              ngrokUrl: data.ngrokUrl,
+              diffSummary: data.diffSummary,
+            };
+          } else if (currentEvent === "error") {
+            await onError(data.message || "Clone share failed");
+            throw new Error(data.message || "Clone share failed");
+          }
+        } catch (e) {
+          if (e instanceof Error && e.message !== "Clone share failed") {
+            continue;
+          }
+          throw e;
+        }
+        currentEvent = "";
+      }
+    }
+  }
+
+  throw new Error("Clone share stream ended without completion");
 }
 
 /**

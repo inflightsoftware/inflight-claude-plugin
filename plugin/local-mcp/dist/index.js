@@ -21890,6 +21890,104 @@ function readSpecificFiles(rootDir, filePaths, includeEssentials = true, debug =
   return files;
 }
 
+// utils/progress-messages.ts
+var CONTENT_MATCHERS = [
+  // Local prep phase
+  { pattern: /Starting share for/i, message: "Preparing your project..." },
+  { pattern: /Checking Share API/i, message: "Preparing your project..." },
+  { pattern: /Share API is healthy/i, message: "Preparing your project..." },
+  { pattern: /Getting git info/i, message: "Loading your code..." },
+  { pattern: /Reading project files|Reading all project/i, message: "Loading your code..." },
+  { pattern: /Analyzing dependencies/i, message: "Loading your code..." },
+  { pattern: /Reading.*analyzed files/i, message: "Loading your code..." },
+  { pattern: /Authenticating with InFlight/i, message: "Loading your code..." },
+  { pattern: /Starting share on server/i, message: "Uploading your project..." },
+  // Chunked upload phase
+  { pattern: /Large project.*chunked/i, message: "Uploading your project..." },
+  { pattern: /Splitting into.*chunks/i, message: "Uploading your project..." },
+  { pattern: /Initializing chunked/i, message: "Uploading your project..." },
+  { pattern: /Uploading chunk/i, message: "Uploading your project..." },
+  { pattern: /Finalizing upload/i, message: "Upload complete, starting analysis..." },
+  // Server sandbox & upload phase
+  { pattern: /Validating workspace/i, message: "Setting things up..." },
+  { pattern: /Creating sandbox/i, message: "Setting things up..." },
+  { pattern: /Uploading.*files/i, message: "Uploading your project..." },
+  { pattern: /Writing git diff/i, message: "Preparing your changes for review..." },
+  { pattern: /Preparing analysis/i, message: "Getting ready to analyze..." },
+  // Claude installation & analysis phase
+  { pattern: /Checking Claude|Installing Claude/i, message: "Getting ready to analyze..." },
+  { pattern: /Setting up.*user|non-root/i, message: "Getting ready to analyze..." },
+  { pattern: /Starting Claude/i, message: "Running a detailed analysis of your changes..." },
+  { pattern: /Claude is analyzing/i, message: "Analyzing your changes..." },
+  { pattern: /Claude is working/i, message: "Still analyzing..." },
+  { pattern: /^Claude:/i, message: "Analyzing your changes..." },
+  { pattern: /Analyzing\.\.\. \(\d+s\)/i, message: "Still analyzing..." },
+  { pattern: /Claude finished/i, message: "Analysis complete! Building your preview..." },
+  // Prototype found
+  { pattern: /Prototype ready|Prototype found/i, message: "Analysis complete! Building your preview..." },
+  // Deploy phase
+  { pattern: /Configuring preview/i, message: "Building your preview..." },
+  { pattern: /Installing dependencies/i, message: "Installing dependencies..." },
+  { pattern: /Starting dev server/i, message: "Starting your preview..." },
+  { pattern: /Waiting for server/i, message: "Starting your preview..." },
+  { pattern: /Setting up preview tunnel/i, message: "Setting up your preview link..." },
+  { pattern: /Preview tunnel ready/i, message: "Preview link is ready!" },
+  { pattern: /Waiting for Vite/i, message: "Almost there..." },
+  { pattern: /Preview ready/i, message: "Preview is live!" },
+  { pattern: /Preview may still be compiling/i, message: "Almost there..." },
+  // Finalization
+  { pattern: /Creating InFlight version/i, message: "Creating your InFlight version..." },
+  { pattern: /Tracking sandbox/i, message: "Saving your share..." },
+  { pattern: /Generating diff summary/i, message: "Summarizing your changes..." },
+  { pattern: /Generating review/i, message: "Preparing feedback questions..." },
+  { pattern: /^Complete!$/i, message: "All done!" },
+  { pattern: /Share complete/i, message: "All done!" },
+  // Clone-specific messages
+  { pattern: /Checking repository access/i, message: "Checking repository access..." },
+  { pattern: /Cloning repository/i, message: "Cloning your repository..." },
+  { pattern: /Setting up project files/i, message: "Setting up your project..." },
+  { pattern: /Git clone available/i, message: "Found a faster way to load your project!" }
+];
+var PHASE_MESSAGES = [
+  { maxPct: 5, message: "Preparing your project..." },
+  { maxPct: 12, message: "Loading your code..." },
+  { maxPct: 42, message: "Uploading your project..." },
+  { maxPct: 50, message: "Setting things up..." },
+  { maxPct: 55, message: "Getting ready to analyze..." },
+  { maxPct: 70, message: "Analyzing your changes..." },
+  { maxPct: 80, message: "Building your preview..." },
+  { maxPct: 90, message: "Setting up your preview link..." },
+  { maxPct: 96, message: "Creating your InFlight version..." },
+  { maxPct: 100, message: "Wrapping up..." }
+];
+var lastFriendlyMessage = "";
+function toFriendlyMessage(percentage, rawMessage) {
+  let friendly;
+  for (const matcher of CONTENT_MATCHERS) {
+    if (matcher.pattern.test(rawMessage)) {
+      friendly = matcher.message;
+      break;
+    }
+  }
+  if (!friendly) {
+    for (const phase of PHASE_MESSAGES) {
+      if (percentage <= phase.maxPct) {
+        friendly = phase.message;
+        break;
+      }
+    }
+  }
+  friendly = friendly || "Working on it...";
+  if (friendly === lastFriendlyMessage) {
+    return null;
+  }
+  lastFriendlyMessage = friendly;
+  return friendly;
+}
+function resetMessageState() {
+  lastFriendlyMessage = "";
+}
+
 // index.ts
 var ENVIRONMENTS = {
   local: { shareApi: "http://localhost:3002" },
@@ -22148,22 +22246,26 @@ server.tool(
   async (args, extra) => {
     const dir = args.directory || process.cwd();
     const progressToken = extra._meta?.progressToken;
+    resetMessageState();
     const sendProgress = async (progress, total, message) => {
       if (message) {
-        await log(message);
+        await log(`[${progress}%] ${message}`);
       }
-      if (progressToken && extra.sendNotification) {
-        try {
-          await extra.sendNotification({
-            method: "notifications/progress",
-            params: {
-              progressToken,
-              progress,
-              total,
-              ...message && { message }
-            }
-          });
-        } catch {
+      if (message && progressToken && extra.sendNotification) {
+        const friendly = toFriendlyMessage(progress, message);
+        if (friendly) {
+          try {
+            await extra.sendNotification({
+              method: "notifications/progress",
+              params: {
+                progressToken,
+                progress,
+                total,
+                message: friendly
+              }
+            });
+          } catch {
+          }
         }
       }
     };
@@ -22208,46 +22310,9 @@ server.tool(
     }
     await log(`  Branch: ${gitInfo.currentBranch} vs ${gitInfo.baseBranch}`);
     await log(`  Diff size: ${gitInfo.diff.length} bytes`);
-    let files;
-    let usedStaticAnalysis = false;
-    if (args.useStaticAnalysis) {
-      await sendProgress(8, 100, "Analyzing dependencies...");
-      try {
-        const analysisResult = await analyzeProjectDependencies(dir, void 0, gitInfo.baseBranch);
-        const localFiles = analysisResult.dependencies.localFiles;
-        await log(`  Analysis completed in ${analysisResult.metadata.analysisTimeMs}ms`);
-        await log(`  Changed files: ${analysisResult.changedFiles.length}`);
-        await log(`  UI-relevant entry points: ${analysisResult.metadata.entryPoints.length}`);
-        await log(`  Local dependencies: ${localFiles.length}`);
-        await log(`  NPM packages: ${analysisResult.dependencies.npmPackages.length}`);
-        if (localFiles.length > 0) {
-          await sendProgress(10, 100, `Reading ${localFiles.length} analyzed files...`);
-          files = readSpecificFiles(dir, localFiles, true, true);
-          usedStaticAnalysis = true;
-          await log(`  Using static analysis: ${Object.keys(files).length} files to upload`);
-        } else {
-          await log(`  No UI-relevant dependencies found, falling back to full upload`);
-          await sendProgress(10, 100, "Reading all project files...");
-          files = readProjectFiles(dir, true);
-        }
-      } catch (analysisError) {
-        const errorMsg = analysisError instanceof Error ? analysisError.message : String(analysisError);
-        await log(`  Static analysis failed: ${errorMsg}`, "warning");
-        await log(`  Falling back to full project upload`);
-        await sendProgress(10, 100, "Reading all project files...");
-        files = readProjectFiles(dir, true);
-      }
-    } else {
-      await sendProgress(8, 100, "Reading project files...");
-      files = readProjectFiles(dir, true);
-    }
-    const fileCount = Object.keys(files).length;
-    const totalSize = calculateTotalSize(files);
-    const sizeMB = (totalSize / (1024 * 1024)).toFixed(2);
-    await log(`  ${usedStaticAnalysis ? "Analyzed" : "Found"} ${fileCount} files (${sizeMB} MB)`);
     let authData = getAuthData();
     if (!authData) {
-      await sendProgress(10, 100, "Authenticating with InFlight...");
+      await sendProgress(8, 100, "Authenticating with InFlight...");
       try {
         authData = await authenticate((msg) => log(msg));
         await log(`  Authenticated as ${authData.email || authData.userId}`);
@@ -22262,6 +22327,128 @@ server.tool(
     } else {
       await log(`  Using cached auth for ${authData.email || authData.userId}`);
     }
+    let useGitClone = false;
+    let githubAppTip = null;
+    if (gitInfo.gitUrl && args.workspaceId) {
+      try {
+        await sendProgress(9, 100, "Checking repository access...");
+        const checkResponse = await fetch(`${SHARE_API_URL}/share/check-clone`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${authData.apiKey}`
+          },
+          body: JSON.stringify({
+            gitUrl: gitInfo.gitUrl,
+            workspaceId: args.workspaceId
+          })
+        });
+        if (checkResponse.ok) {
+          const checkResult = await checkResponse.json();
+          useGitClone = checkResult.cloneAvailable === true;
+          if (useGitClone) {
+            await log(`  Git clone available for ${gitInfo.gitUrl}`);
+          } else if (gitInfo.gitUrl.includes("github.com")) {
+            await log(`  GitHub repo detected but InFlight GitHub App not installed for this workspace`);
+            githubAppTip = "Tip: Install the InFlight GitHub App to make sharing faster. Instead of uploading files, InFlight can clone your repo directly. Install it here: https://github.com/apps/inflight-app/installations/new";
+          }
+        }
+      } catch {
+        await log(`  Clone check failed, falling back to file upload`);
+      }
+    }
+    if (useGitClone) {
+      await sendProgress(10, 100, "Git clone available, skipping file upload...");
+      try {
+        const result = await callCloneShareWithSSE(
+          {
+            gitDiff: {
+              diff: gitInfo.diff,
+              diffStat: gitInfo.diffStat || "",
+              baseBranch: gitInfo.baseBranch || "main",
+              currentBranch: gitInfo.currentBranch || "unknown"
+            },
+            gitUrl: gitInfo.gitUrl,
+            currentBranch: gitInfo.currentBranch || "unknown",
+            workspaceId: args.workspaceId,
+            existingProjectId: args.existingProjectId
+          },
+          authData.apiKey,
+          // Remap server percentages (0-100) to our range (10-100)
+          // so progress never jumps backwards after local steps reach 10%
+          async (percentage, step) => {
+            const remapped = 10 + Math.floor(percentage / 100 * 90);
+            await sendProgress(remapped, 100, step);
+          },
+          async (message) => {
+            await log(`Server error: ${message}`, "error");
+          }
+        );
+        await sendProgress(100, 100, "Share complete!");
+        await log("========== SUCCESS (clone mode) ==========");
+        await log(`Preview URL: ${result.previewUrl}`);
+        await log(`InFlight URL: ${result.inflightUrl}`);
+        openInBrowser(result.inflightUrl);
+        await log("Opening InFlight in browser...");
+        return {
+          content: [{
+            type: "text",
+            text: JSON.stringify({
+              success: true,
+              previewUrl: result.previewUrl,
+              sandboxUrl: result.sandboxUrl,
+              sandboxId: result.sandboxId,
+              inflightUrl: result.inflightUrl,
+              versionId: result.versionId,
+              projectId: result.projectId,
+              cloneMode: true,
+              diffSummary: result.diffSummary
+            }, null, 2)
+          }]
+        };
+      } catch (error2) {
+        const message = error2 instanceof Error ? error2.message : String(error2);
+        await log(`Clone share failed: ${message}`, "warning");
+        await log(`Falling back to file upload...`);
+      }
+    }
+    let files;
+    let usedStaticAnalysis = false;
+    if (args.useStaticAnalysis) {
+      await sendProgress(10, 100, "Analyzing dependencies...");
+      try {
+        const analysisResult = await analyzeProjectDependencies(dir, void 0, gitInfo.baseBranch);
+        const localFiles = analysisResult.dependencies.localFiles;
+        await log(`  Analysis completed in ${analysisResult.metadata.analysisTimeMs}ms`);
+        await log(`  Changed files: ${analysisResult.changedFiles.length}`);
+        await log(`  UI-relevant entry points: ${analysisResult.metadata.entryPoints.length}`);
+        await log(`  Local dependencies: ${localFiles.length}`);
+        await log(`  NPM packages: ${analysisResult.dependencies.npmPackages.length}`);
+        if (localFiles.length > 0) {
+          await sendProgress(11, 100, `Reading ${localFiles.length} analyzed files...`);
+          files = readSpecificFiles(dir, localFiles, true, true);
+          usedStaticAnalysis = true;
+          await log(`  Using static analysis: ${Object.keys(files).length} files to upload`);
+        } else {
+          await log(`  No UI-relevant dependencies found, falling back to full upload`);
+          await sendProgress(11, 100, "Reading all project files...");
+          files = readProjectFiles(dir, true);
+        }
+      } catch (analysisError) {
+        const errorMsg = analysisError instanceof Error ? analysisError.message : String(analysisError);
+        await log(`  Static analysis failed: ${errorMsg}`, "warning");
+        await log(`  Falling back to full project upload`);
+        await sendProgress(11, 100, "Reading all project files...");
+        files = readProjectFiles(dir, true);
+      }
+    } else {
+      await sendProgress(10, 100, "Reading project files...");
+      files = readProjectFiles(dir, true);
+    }
+    const fileCount = Object.keys(files).length;
+    const totalSize = calculateTotalSize(files);
+    const sizeMB = (totalSize / (1024 * 1024)).toFixed(2);
+    await log(`  ${usedStaticAnalysis ? "Analyzed" : "Found"} ${fileCount} files (${sizeMB} MB)`);
     const filesAsFileMap = files;
     const useChunkedUpload = needsChunkedUpload(filesAsFileMap);
     if (useChunkedUpload) {
@@ -22281,7 +22468,6 @@ server.tool(
           args.existingProjectId,
           gitInfo.gitUrl,
           async (percentage, step) => {
-            await log(`[${percentage}%] ${step}`);
             await sendProgress(percentage, 100, step);
           },
           async (message) => {
@@ -22306,7 +22492,8 @@ server.tool(
               versionId: result.versionId,
               projectId: result.projectId,
               fileCount,
-              chunkedUpload: true
+              chunkedUpload: true,
+              ...githubAppTip && { githubAppTip }
             }, null, 2)
           }]
         };
@@ -22340,10 +22527,11 @@ server.tool(
           gitUrl: gitInfo.gitUrl
         },
         authData.apiKey,
-        // Progress callback - called for each SSE progress event
+        // Progress callback - remap server percentages (0-100) to our range (12-100)
+        // so progress never jumps backwards after local steps reach 12%
         async (percentage, step) => {
-          await log(`[${percentage}%] ${step}`);
-          await sendProgress(percentage, 100, step);
+          const remapped = 12 + Math.floor(percentage / 100 * 88);
+          await sendProgress(remapped, 100, step);
         },
         // Error callback
         async (message) => {
@@ -22372,7 +22560,8 @@ server.tool(
             versionId: result.versionId,
             projectId: result.projectId,
             fileCount,
-            diffSummary: result.diffSummary
+            diffSummary: result.diffSummary,
+            ...githubAppTip && { githubAppTip }
           }, null, 2)
         }]
       };
@@ -22455,6 +22644,72 @@ async function callShareWithSSE(request, apiKey, onProgress, onError) {
     }
   }
   throw new Error("Share stream ended without completion");
+}
+async function callCloneShareWithSSE(request, apiKey, onProgress, onError) {
+  const url = `${SHARE_API_URL}/share/clone`;
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "text/event-stream",
+      Authorization: `Bearer ${apiKey}`
+    },
+    body: JSON.stringify(request)
+  });
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Clone share failed (${response.status}): ${errorText || "Empty response"}`);
+  }
+  const reader = response.body?.getReader();
+  if (!reader) {
+    throw new Error("No response body");
+  }
+  const decoder = new TextDecoder();
+  let buffer = "";
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done)
+      break;
+    buffer += decoder.decode(value, { stream: true });
+    const lines = buffer.split("\n");
+    buffer = lines.pop() || "";
+    let currentEvent = "";
+    for (const line of lines) {
+      if (line.startsWith("event: ")) {
+        currentEvent = line.slice(7).trim();
+      } else if (line.startsWith("data: ")) {
+        try {
+          const data = JSON.parse(line.slice(6));
+          if (currentEvent === "progress" || !currentEvent && data.step) {
+            const pct = data.percentage || 0;
+            const step = data.step || "Processing...";
+            await onProgress(pct, step);
+          } else if (currentEvent === "complete") {
+            return {
+              inflightUrl: data.inflightUrl,
+              versionId: data.versionId,
+              projectId: data.projectId,
+              sandboxId: data.sandboxId,
+              sandboxUrl: data.sandboxUrl,
+              previewUrl: data.previewUrl || data.sandboxUrl,
+              ngrokUrl: data.ngrokUrl,
+              diffSummary: data.diffSummary
+            };
+          } else if (currentEvent === "error") {
+            await onError(data.message || "Clone share failed");
+            throw new Error(data.message || "Clone share failed");
+          }
+        } catch (e) {
+          if (e instanceof Error && e.message !== "Clone share failed") {
+            continue;
+          }
+          throw e;
+        }
+        currentEvent = "";
+      }
+    }
+  }
+  throw new Error("Clone share stream ended without completion");
 }
 async function callChunkedShare(files, gitDiff, apiKey, workspaceId, existingProjectId, gitUrl, onProgress, onError) {
   const chunks = chunkFiles(files);
