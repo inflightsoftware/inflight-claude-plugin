@@ -7,7 +7,7 @@
 ### Claude Code
 
 ```bash
-claude mcp add inflight-mcp -- npx inflight-mcp
+claude mcp add --global inflight -- npx inflight-mcp
 ```
 
 ### Claude Desktop

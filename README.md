@@ -9,13 +9,7 @@ Share UI prototypes for review, directly from your AI coding tool.
 ### Claude Code (recommended)
 
 ```bash
-claude mcp add inflight-mcp -- npx inflight-mcp
-```
-
-### Claude Code Plugin (includes /share slash commands)
-
-```bash
-claude plugin marketplace add https://github.com/inflightsoftware/inflight-claude-plugin && claude plugin install inflight
+claude mcp add --global inflight -- npx inflight-mcp
 ```
 
 ### Claude Desktop
@@ -52,11 +46,11 @@ Once installed, just ask Claude to share your project:
 
 > "Share my UI changes to Inflight"
 
-Or if you installed the plugin, use the slash commands:
+Or use the slash commands:
 
-- `/share` — Share UI changes from your feature branch
-- `/full-share` — Share the entire project
-- `/inflight` — Manage prototypes (list, delete)
+- `/inflight:partial-share` — Share UI changes from your feature branch
+- `/inflight:full-share` — Share the entire project
+- `/inflight:manage` — Manage prototypes (list, delete)
 
 ## How it works
 

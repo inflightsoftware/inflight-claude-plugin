@@ -1,6 +1,6 @@
 {
   "name": "inflight-mcp",
-  "version": "1.0.0",
+  "version": "1.1.2",
   "description": "Inflight MCP server — share UI prototypes for review from any AI coding tool",
   "license": "MIT",
   "type": "module",

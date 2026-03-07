@@ -21980,8 +21980,10 @@ var server = new McpServer(
   },
   {
     capabilities: {
-      logging: {}
+      logging: {},
       // Enable logging capability for sendLoggingMessage
+      prompts: {}
+      // Enable prompts (slash commands)
     }
   }
 );
@@ -22561,6 +22563,98 @@ async function callChunkedShare(files, gitDiff, apiKey, workspaceId, existingPro
   }
   throw new Error("Chunked share stream ended without completion");
 }
+server.prompt(
+  "partial-share",
+  "Share UI changes from your feature branch as an interactive prototype on Inflight for review",
+  {
+    directory: external_exports.string().optional().describe("Project directory (defaults to cwd)")
+  },
+  async (args) => {
+    return {
+      messages: [
+        {
+          role: "user",
+          content: {
+            type: "text",
+            text: `Share my UI changes to Inflight for review.
+
+Steps:
+1. Run \`git status\` to verify this is a git repo on a feature branch with commits. If on main/master or no changes, let me know and stop.
+2. Call the \`share\` MCP tool with directory set to the current project directory (${args.directory || "use your working directory"}).
+3. Show the result: "Shared to Inflight: [inflightUrl] \u2014 Share this link with your team for feedback."
+
+IMPORTANT: Always pass the \`directory\` parameter to the share tool \u2014 do not rely on defaults.`
+          }
+        }
+      ]
+    };
+  }
+);
+server.prompt(
+  "full-share",
+  "Share your entire project to Inflight for feedback and collaboration",
+  {
+    directory: external_exports.string().optional().describe("Project directory (defaults to cwd)")
+  },
+  async (args) => {
+    return {
+      messages: [
+        {
+          role: "user",
+          content: {
+            type: "text",
+            text: `Share my full project to Inflight for feedback.
+
+Steps:
+1. Check for .env files in the project. If found, ask me whether to exclude them (recommended: yes).
+2. If this is a git repo on a feature branch with commits, suggest using /partial-share instead for a more focused share.
+3. Read all source files, excluding: .git/, node_modules/, dist/, build/, .next/, out/, *.lock files, and .env* files (unless I chose to include them).
+4. Call the \`share\` MCP tool with the files, an empty gitDiff, and directory set to the current project directory (${args.directory || "use your working directory"}).
+5. Show the result: "Shared to Inflight: [URL] \u2014 Share this link with your team for feedback."
+
+IMPORTANT: Always pass the \`directory\` parameter to the share tool \u2014 do not rely on defaults.`
+          }
+        }
+      ]
+    };
+  }
+);
+server.prompt(
+  "manage",
+  "Manage Inflight prototypes \u2014 list, delete, or view shared prototypes and projects",
+  {
+    action: external_exports.string().optional().describe("Action: list, delete, or projects")
+  },
+  async (args) => {
+    const action = args.action?.toLowerCase();
+    let instructions;
+    if (action === "list") {
+      instructions = `List my Inflight prototypes. Call the \`prototype_list\` MCP tool and show results as a formatted list with: Project Name, Type, Status, Inflight URL, and Created date. If none found, say "No prototypes yet. Use /share to share your first one."`;
+    } else if (action === "delete") {
+      instructions = `Help me delete an Inflight prototype. First call \`prototype_list\` to show my prototypes. Ask which one to delete. Confirm with "Delete [name]? This can't be undone." Then call \`prototype_delete\` with the sandbox ID.`;
+    } else if (action === "projects") {
+      instructions = `List my Inflight projects. Call the \`list_projects\` MCP tool and show results as a formatted list with: Project Name, Description, and Created date.`;
+    } else {
+      instructions = `I want to manage my Inflight prototypes. Ask me what I'd like to do:
+- **List prototypes** \u2014 Show all shared prototypes
+- **Delete prototype** \u2014 Remove a prototype
+- **List projects** \u2014 Show all projects
+
+Then execute the selected action.`;
+    }
+    return {
+      messages: [
+        {
+          role: "user",
+          content: {
+            type: "text",
+            text: instructions
+          }
+        }
+      ]
+    };
+  }
+);
 async function main() {
   const transport = new StdioServerTransport();
   await server.connect(transport);
