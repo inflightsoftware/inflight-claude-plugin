@@ -208,11 +208,11 @@ export function getGitDiff(
 }
 
 /**
- * Auto-commit all uncommitted changes with a message linking to the InFlight share.
+ * Auto-commit all uncommitted changes with a message linking to the Inflight share.
  * Returns the new commit SHA, or null if the commit failed.
  *
  * @param projectPath - The project directory
- * @param inflightVersionId - The InFlight version ID for the commit message
+ * @param inflightVersionId - The Inflight version ID for the commit message
  * @returns The new short commit SHA, or null if commit failed
  */
 export function autoCommitForShare(
@@ -236,8 +236,8 @@ export function autoCommitForShare(
       stdio: ["pipe", "pipe", "pipe"],
     });
 
-    // Commit with InFlight share message
-    const commitMessage = `InFlight share: ${inflightVersionId}`;
+    // Commit with Inflight share message
+    const commitMessage = `Inflight share: ${inflightVersionId}`;
     execFileSync("git", ["commit", "-m", commitMessage], {
       cwd: projectPath,
       encoding: "utf-8",

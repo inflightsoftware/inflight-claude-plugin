@@ -1,11 +1,11 @@
 ---
 name: share
-description: Share UI changes from your feature branch as an interactive prototype on InFlight for review. Use when the user wants to share their branch changes, create a preview, or get feedback on UI work.
+description: Share UI changes from your feature branch as an interactive prototype on Inflight for review. Use when the user wants to share their branch changes, create a preview, or get feedback on UI work.
 ---
 
 # Share
 
-Share UI changes from your feature branch as an interactive prototype on InFlight for review.
+Share UI changes from your feature branch as an interactive prototype on Inflight for review.
 
 ## Arguments
 
@@ -22,7 +22,7 @@ Run `git status` to verify:
 
 If on main/master or no changes, inform the user and stop.
 
-### 2. Share to InFlight
+### 2. Share to Inflight
 
 Call the `share` MCP tool:
 
@@ -34,34 +34,18 @@ Call the `share` MCP tool:
 }
 ```
 
-This tool will:
-- Read all project files (excluding .git, node_modules, etc.)
-- Get git diff against main/master
-- Upload to a cloud sandbox
-- Run Claude analysis to create a prototype
-- Deploy the prototype with ngrok tunnel
-- Create an InFlight version
-
 ### 3. Show result
 
-The tool automatically opens the InFlight URL in the browser. Display:
+The tool automatically opens the Inflight URL in the browser. Display:
 
 ```
-Share Complete!
+Shared to Inflight: [inflightUrl]
 
-InFlight: [inflightUrl]
-
-Your UI changes have been analyzed and deployed for review.
 Share this link with your team for feedback.
 ```
 
 ## Error Handling
 
-- If not in a git repository, explain the user needs to be in a git repo
-- If Share API is not running, tell user to start it with: `cd apps/share-api && pnpm dev`
-- If no git diff found, explain the user needs commits on a feature branch
-
-## Related Commands
-
-- `/inflight:full-share` - Share the full project to InFlight (not just branch changes)
-- `/inflight:inflight` - Manage prototypes, list, delete
+- If not in a git repository: "This folder isn't a git repo — make sure you're in the right project directory."
+- If no git diff found: "No changes found to share. Make sure you're on a feature branch with commits."
+- If Share API unreachable: "Couldn't reach Inflight servers. Check your internet connection and try again."

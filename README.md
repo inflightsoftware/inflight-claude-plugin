@@ -1,6 +1,6 @@
-# InFlight Claude Code Plugin
+# Inflight Claude Code Plugin
 
-Share and collaborate on UI prototypes via [InFlight](https://inflight.co).
+Share and collaborate on UI prototypes via [Inflight](https://inflight.co).
 
 This plugin allows you to share UI changes from your feature branch as interactive prototypes for team review, directly from Claude Code.
 
@@ -14,7 +14,7 @@ claude plugin marketplace add https://github.com/inflightsoftware/inflight-claud
 
 - [Claude Code CLI](https://claude.ai/code)
 - Node.js 18+
-- An InFlight account (sign up at [inflight.co](https://inflight.co))
+- An Inflight account (sign up at [inflight.co](https://inflight.co))
 
 ## Usage
 
@@ -30,7 +30,7 @@ This will:
 1. Analyze your git diff (feature branch vs main/master)
 2. Upload your code to a cloud sandbox
 3. Run Claude analysis to create a minimal Vite prototype
-4. Deploy the prototype with a shareable InFlight URL
+4. Deploy the prototype with a shareable Inflight URL
 
 ### /full-share
 
@@ -45,7 +45,7 @@ Share the entire project (not just branch changes).
 Manage prototypes and authentication.
 
 ```
-/inflight login     # Authenticate with InFlight
+/inflight login     # Authenticate with Inflight
 /inflight logout    # Clear authentication
 /inflight list      # List your prototypes
 /inflight delete    # Delete a prototype
@@ -55,8 +55,8 @@ Manage prototypes and authentication.
 
 The first time you use a share command, you'll be prompted to authenticate:
 
-1. A browser window opens to InFlight
-2. Sign in with your InFlight account
+1. A browser window opens to Inflight
+2. Sign in with your Inflight account
 3. The plugin receives an API key automatically
 
 Your API key is stored locally at `~/.claude/mcp-inflight-auth.json`.
@@ -66,7 +66,7 @@ Your API key is stored locally at `~/.claude/mcp-inflight-auth.json`.
 1. **Git Analysis**: Reads your branch diff against main/master
 2. **Cloud Sandbox**: Uploads files to a secure CodeSandbox environment
 3. **Claude Analysis**: Runs Claude to create a minimal Vite prototype focusing on UI changes
-4. **InFlight Deployment**: Creates a shareable InFlight version with the live prototype
+4. **Inflight Deployment**: Creates a shareable Inflight version with the live prototype
 
 ## Skills & MCP Tools
 
@@ -84,7 +84,7 @@ And these MCP tools (used internally by skills):
 |------|-------------|
 | `share` | Analyze and deploy UI changes |
 | `check_existing_versions` | Find prior shares for a git repo |
-| `inflight_login` | Authenticate with InFlight |
+| `inflight_login` | Authenticate with Inflight |
 | `inflight_logout` | Clear authentication |
 
 ## Troubleshooting
@@ -93,7 +93,7 @@ And these MCP tools (used internally by skills):
 
 1. Run `/inflight logout` to clear cached auth
 2. Run `/inflight login` to re-authenticate
-3. Ensure you have an InFlight account at [inflight.co](https://inflight.co)
+3. Ensure you have an Inflight account at [inflight.co](https://inflight.co)
 
 ### Update the plugin
 

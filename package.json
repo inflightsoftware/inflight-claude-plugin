@@ -1,7 +1,7 @@
 {
   "name": "@inflight/claude-plugin",
   "version": "1.0.0",
-  "description": "Claude Code plugin for InFlight - share and collaborate on UI prototypes",
+  "description": "Claude Code plugin for Inflight - share and collaborate on UI prototypes",
   "license": "MIT",
   "repository": {
     "type": "git",

@@ -1,11 +1,11 @@
 ---
 name: inflight
-description: Manage InFlight prototypes and projects. List, delete, or view shared prototypes and projects.
+description: Manage Inflight prototypes and projects. List, delete, or view shared prototypes and projects.
 ---
 
-# InFlight
+# Inflight
 
-Manage InFlight prototypes and projects.
+Manage Inflight prototypes and projects.
 
 ## Arguments
 
@@ -30,16 +30,16 @@ Display results in a formatted list:
 - Project Name
 - Type (share or full-share)
 - Status
-- InFlight URL (constructed as `https://vite.inflight.co/v/[versionId]`)
+- Inflight URL (constructed as `https://vite.inflight.co/v/[versionId]`)
 - Created date
 
-If no prototypes found, inform the user: "No prototypes found. Use /inflight:share to create one."
+If no prototypes found: "No prototypes yet. Use `/inflight:share` to share your first one."
 
 ### Action: delete (or "Delete prototype")
 
 1. First, call `prototype_list` to show available prototypes
 2. Ask the user which prototype to delete (by sandbox ID or project name)
-3. Confirm: "Delete prototype **[name]**? This will stop it and remove the InFlight version."
+3. Confirm: "Delete **[name]**? This can't be undone."
 4. Call `prototype_delete` with the sandbox ID
 5. Confirm deletion to user
 
@@ -51,8 +51,3 @@ Display results in a formatted list:
 - Project Name
 - Description (if any)
 - Created date
-
-## Related Commands
-
-- `/inflight:share` - Share UI changes for review
-- `/inflight:full-share` - Share full project
