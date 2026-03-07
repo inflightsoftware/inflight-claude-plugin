@@ -21985,7 +21985,7 @@ var server = new McpServer(
   }
 );
 async function log(message, level = "info") {
-  console.error(`[Local MCP] ${message}`);
+  console.error(`[Inflight] ${message}`);
   try {
     await server.server.sendLoggingMessage({
       level,
@@ -21995,6 +21995,17 @@ async function log(message, level = "info") {
   } catch {
   }
 }
+var BAR_WIDTH = 20;
+function renderProgressBar(pct, label) {
+  const clamped = Math.max(0, Math.min(100, pct));
+  const filled = Math.round(clamped / 100 * BAR_WIDTH);
+  const empty = BAR_WIDTH - filled;
+  const bar = "\u2588".repeat(filled) + "\u2591".repeat(empty);
+  const pctStr = `${Math.round(clamped)}%`.padStart(4);
+  return label ? `${bar} ${pctStr}  ${label}` : `${bar} ${pctStr}`;
+}
+var lastProgressPct = -1;
+var lastProgressTime = 0;
 server.tool(
   "auth_status",
   "Check if you're signed in to Inflight",
@@ -22152,10 +22163,21 @@ server.tool(
   async (args, extra) => {
     const dir = args.directory || process.cwd();
     const progressToken = extra._meta?.progressToken;
+    lastProgressPct = -1;
+    lastProgressTime = 0;
     const sendProgress = async (progress, total, message) => {
-      if (message) {
-        await log(message);
+      const pct = Math.round(progress / total * 100);
+      const now = Date.now();
+      const isBookend = pct === 0 || pct >= 100;
+      const enoughChange = Math.abs(pct - lastProgressPct) >= 3;
+      const enoughTime = now - lastProgressTime >= 500;
+      if (!isBookend && !enoughChange && !enoughTime) {
+        return;
       }
+      lastProgressPct = pct;
+      lastProgressTime = now;
+      const bar = renderProgressBar(pct, message);
+      await log(bar);
       if (progressToken && extra.sendNotification) {
         try {
           await extra.sendNotification({
@@ -22299,7 +22321,7 @@ ${authMessage}` }],
         };
       }
     }
-    await sendProgress(12, 100, "Uploading to Inflight...");
+    await sendProgress(12, 100, `Uploading ${sizeMB} MB to Inflight...`);
     try {
       const result = await callShareWithSSE(
         {
@@ -22442,12 +22464,15 @@ async function callChunkedShare(files, gitDiff, apiKey, workspaceId, existingPro
     throw new Error(`Failed to initialize chunked upload: ${errorText}`);
   }
   const { sessionId, sandboxId } = await initResponse.json();
-  console.error(`[Local MCP] Chunked upload session: ${sessionId}, sandbox: ${sandboxId}`);
+  const totalMB = (stats.totalSize / (1024 * 1024)).toFixed(1);
+  let uploadedSize = 0;
   for (let i = 0; i < chunks.length; i++) {
     const chunk = chunks[i];
-    const chunkFileCount = Object.keys(chunk).length;
-    const chunkProgress = 10 + Math.floor(i / chunks.length * 30);
-    await onProgress(chunkProgress, `Uploading files (${i + 1}/${chunks.length})...`);
+    const chunkSize = Object.values(chunk).reduce((sum, content) => sum + content.length, 0);
+    const chunkProgress = 10 + Math.floor((i + 1) / chunks.length * 30);
+    uploadedSize += chunkSize;
+    const uploadedMB = (uploadedSize / (1024 * 1024)).toFixed(1);
+    await onProgress(chunkProgress, `Uploading ${uploadedMB}/${totalMB} MB...`);
     const uploadResponse = await fetch(`${SHARE_API_URL}/share/chunked/${sessionId}/upload`, {
       method: "POST",
       headers: {
@@ -22464,8 +22489,7 @@ async function callChunkedShare(files, gitDiff, apiKey, workspaceId, existingPro
       const errorText = await uploadResponse.text();
       throw new Error(`Failed to upload chunk ${i + 1}: ${errorText}`);
     }
-    const uploadResult = await uploadResponse.json();
-    console.error(`[Local MCP] Chunk ${i + 1} uploaded: ${uploadResult.uploaded} files`);
+    await uploadResponse.json();
   }
   await onProgress(42, "Building prototype...");
   const finalizeResponse = await fetch(`${SHARE_API_URL}/share/chunked/${sessionId}/finalize`, {

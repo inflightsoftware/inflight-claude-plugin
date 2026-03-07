@@ -153,7 +153,7 @@ const server = new McpServer(
  */
 async function log(message: string, level: "info" | "debug" | "warning" | "error" = "info") {
   // Always log to stderr for debugging
-  console.error(`[Local MCP] ${message}`);
+  console.error(`[Inflight] ${message}`);
 
   // Also send to MCP client if available
   try {
@@ -166,6 +166,25 @@ async function log(message: string, level: "info" | "debug" | "warning" | "error
     // Ignore if not connected yet
   }
 }
+
+/**
+ * Render a visual progress bar string
+ *
+ *   ████████████░░░░░░░░  60%  Uploading to Inflight...
+ */
+const BAR_WIDTH = 20;
+function renderProgressBar(pct: number, label?: string): string {
+  const clamped = Math.max(0, Math.min(100, pct));
+  const filled = Math.round((clamped / 100) * BAR_WIDTH);
+  const empty = BAR_WIDTH - filled;
+  const bar = "█".repeat(filled) + "░".repeat(empty);
+  const pctStr = `${Math.round(clamped)}%`.padStart(4);
+  return label ? `${bar} ${pctStr}  ${label}` : `${bar} ${pctStr}`;
+}
+
+/** Track last progress to throttle updates */
+let lastProgressPct = -1;
+let lastProgressTime = 0;
 
 // Tool: Check authentication status
 server.tool(
@@ -347,12 +366,30 @@ server.tool(
     // Get progressToken from _meta - required for progress notifications to show in Claude Code
     const progressToken = (extra as any)._meta?.progressToken;
 
+    // Reset progress state for this share
+    lastProgressPct = -1;
+    lastProgressTime = 0;
+
     // Helper to send progress notifications to MCP client
-    // This shows real-time progress in the user's Claude Code window
+    // Renders a visual progress bar and throttles updates
     const sendProgress = async (progress: number, total: number, message?: string) => {
-      if (message) {
-        await log(message);
+      const pct = Math.round((progress / total) * 100);
+      const now = Date.now();
+
+      // Throttle: skip if <3% change and <500ms elapsed, unless it's start/end
+      const isBookend = pct === 0 || pct >= 100;
+      const enoughChange = Math.abs(pct - lastProgressPct) >= 3;
+      const enoughTime = now - lastProgressTime >= 500;
+
+      if (!isBookend && !enoughChange && !enoughTime) {
+        return;
       }
+
+      lastProgressPct = pct;
+      lastProgressTime = now;
+
+      const bar = renderProgressBar(pct, message);
+      await log(bar);
 
       if (progressToken && extra.sendNotification) {
         try {
@@ -520,7 +557,7 @@ server.tool(
     }
 
     // Step 5b: Standard upload (< 3MB)
-    await sendProgress(12, 100, "Uploading to Inflight...");
+    await sendProgress(12, 100, `Uploading ${sizeMB} MB to Inflight...`);
 
     try {
       const result = await callShareWithSSE(
@@ -740,15 +777,19 @@ async function callChunkedShare(
   }
 
   const { sessionId, sandboxId } = await initResponse.json();
-  console.error(`[Local MCP] Chunked upload session: ${sessionId}, sandbox: ${sandboxId}`);
 
   // Step 2: Upload chunks sequentially
+  const totalMB = (stats.totalSize / (1024 * 1024)).toFixed(1);
+  let uploadedSize = 0;
+
   for (let i = 0; i < chunks.length; i++) {
     const chunk = chunks[i];
-    const chunkFileCount = Object.keys(chunk).length;
-    const chunkProgress = 10 + Math.floor((i / chunks.length) * 30); // 10-40%
+    const chunkSize = Object.values(chunk).reduce((sum, content) => sum + content.length, 0);
+    const chunkProgress = 10 + Math.floor(((i + 1) / chunks.length) * 30); // 10-40%
 
-    await onProgress(chunkProgress, `Uploading files (${i + 1}/${chunks.length})...`);
+    uploadedSize += chunkSize;
+    const uploadedMB = (uploadedSize / (1024 * 1024)).toFixed(1);
+    await onProgress(chunkProgress, `Uploading ${uploadedMB}/${totalMB} MB...`);
 
     const uploadResponse = await fetch(`${SHARE_API_URL}/share/chunked/${sessionId}/upload`, {
       method: "POST",
@@ -768,8 +809,7 @@ async function callChunkedShare(
       throw new Error(`Failed to upload chunk ${i + 1}: ${errorText}`);
     }
 
-    const uploadResult = await uploadResponse.json();
-    console.error(`[Local MCP] Chunk ${i + 1} uploaded: ${uploadResult.uploaded} files`);
+    await uploadResponse.json();
   }
 
   // Step 3: Finalize and get SSE stream
