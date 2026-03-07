@@ -1,5 +1,5 @@
 /**
- * InFlight Local MCP Server
+ * Inflight Local MCP Server
  *
  * Architecture:
  * - Share API (Node.js :3002): All share operations
@@ -170,7 +170,7 @@ async function log(message: string, level: "info" | "debug" | "warning" | "error
 // Tool: Check authentication status
 server.tool(
   "auth_status",
-  "Check InFlight authentication status",
+  "Check if you're signed in to Inflight",
   {},
   async () => {
     const authData = getAuthData();
@@ -197,10 +197,10 @@ server.tool(
   }
 );
 
-// Tool: Authenticate with InFlight
+// Tool: Authenticate with Inflight
 server.tool(
   "inflight_login",
-  "Authenticate with InFlight via browser. Opens a browser window for login.",
+  "Sign in to Inflight. Opens a browser window to log in.",
   {
     force: z.boolean().optional().describe("Force re-authentication even if already logged in"),
   },
@@ -247,10 +247,10 @@ server.tool(
   }
 );
 
-// Tool: Logout from InFlight
+// Tool: Logout from Inflight
 server.tool(
   "inflight_logout",
-  "Clear stored InFlight authentication credentials",
+  "Sign out of Inflight",
   {},
   async () => {
     const wasAuthenticated = isAuthenticated();
@@ -259,8 +259,8 @@ server.tool(
       content: [{
         type: "text" as const,
         text: wasAuthenticated
-          ? "Successfully logged out from InFlight."
-          : "No stored credentials to clear.",
+          ? "Signed out of Inflight."
+          : "You weren't signed in.",
       }],
     };
   }
@@ -269,7 +269,7 @@ server.tool(
 // Tool: Get git info
 server.tool(
   "get_git_info",
-  "Get git information (branch, diff, remote URL) from a directory",
+  "Get branch and change info from a git project",
   {
     directory: z.string().optional().describe("Directory path (defaults to cwd)"),
   },
@@ -291,7 +291,7 @@ server.tool(
 // Tool: Analyze dependencies for partial share
 server.tool(
   "analyze_dependencies",
-  "Analyze dependency graph for changed files to prepare for partial share. Uses esbuild to quickly resolve all imports and returns local files, npm packages, and workspace packages needed.",
+  "Analyze which files are needed for a partial share based on what changed.",
   {
     projectPath: z.string().describe("Absolute path to the project root directory"),
     changedFiles: z.array(z.string()).optional().describe("Array of changed file paths relative to project root. Auto-detected from git diff if not provided."),
@@ -331,13 +331,13 @@ server.tool(
   }
 );
 
-// Tool: Share - uploads to cloud sandbox, runs Claude analysis, creates InFlight version
+// Tool: Share
 server.tool(
   "share",
-  "Share UI changes for review. Uploads to cloud sandbox, runs Claude analysis, creates InFlight version.",
+  "Share your project to Inflight for review. Uploads your code, builds a live prototype, and creates a shareable link.",
   {
     directory: z.string().optional().describe("Project directory (defaults to cwd)"),
-    workspaceId: z.string().optional().describe("InFlight workspace ID"),
+    workspaceId: z.string().optional().describe("Inflight workspace ID"),
     existingProjectId: z.string().optional().describe("Add version to existing project"),
     useStaticAnalysis: z.boolean().optional().describe("Use static dependency analysis to upload only relevant files (experimental, default: false)"),
   },
@@ -371,117 +371,92 @@ server.tool(
       }
     };
 
-    await log("========== SHARE ==========");
-    await sendProgress(0, 100, `Starting share for: ${dir}`);
-    await log(`Share API: ${SHARE_API_URL}`);
+    await sendProgress(0, 100, "Preparing to share...");
 
     if (!existsSync(dir)) {
-      await log(`Error: Directory not found: ${dir}`, "error");
       return {
-        content: [{ type: "text" as const, text: `Error: Directory not found: ${dir}` }],
+        content: [{ type: "text" as const, text: `Couldn't find that directory: ${dir}` }],
         isError: true,
       };
     }
 
     // Step 1: Check Share API is running
-    await sendProgress(2, 100, "Checking Share API...");
+    await sendProgress(2, 100, "Connecting to Inflight...");
     const csbHealthy = await shareApiHealthCheck();
     if (!csbHealthy) {
-      await log(`Share API not running at ${SHARE_API_URL}`, "error");
       return {
         content: [{
           type: "text" as const,
-          text: `Error: Share API not running at ${SHARE_API_URL}. Start it with: cd apps/share-api && pnpm dev`,
+          text: `Couldn't reach Inflight servers. Check your internet connection and try again.`,
         }],
         isError: true,
       };
     }
-    await log("  Share API is healthy");
 
     // Step 2: Get git info
-    await sendProgress(5, 100, "Getting git info...");
+    await sendProgress(5, 100, "Reading your changes...");
     const gitInfo = getGitInfo(dir);
     if (!gitInfo.isGitRepo) {
-      await log("Not a git repository", "error");
       return {
-        content: [{ type: "text" as const, text: "Error: Not a git repository." }],
+        content: [{ type: "text" as const, text: "This folder isn't a git repo — make sure you're in the right project directory." }],
         isError: true,
       };
     }
 
     if (!gitInfo.diff) {
-      await log("No git diff found", "error");
       return {
-        content: [{ type: "text" as const, text: "Error: No git diff found. Make sure you're on a feature branch with changes." }],
+        content: [{ type: "text" as const, text: "No changes found to share. Make sure you're on a feature branch with commits." }],
         isError: true,
       };
     }
 
-    await log(`  Branch: ${gitInfo.currentBranch} vs ${gitInfo.baseBranch}`);
-    await log(`  Diff size: ${gitInfo.diff.length} bytes`);
+    await log(`Branch: ${gitInfo.currentBranch}`);
 
     // Step 3: Read project files (optionally use static dependency analysis)
     let files: FileMap;
     let usedStaticAnalysis = false;
 
     if (args.useStaticAnalysis) {
-      // Experimental: Use static dependency analysis to upload only relevant files
-      await sendProgress(8, 100, "Analyzing dependencies...");
+      await sendProgress(8, 100, "Analyzing project...");
       try {
         const analysisResult = await analyzeProjectDependencies(dir, undefined, gitInfo.baseBranch);
         const localFiles = analysisResult.dependencies.localFiles;
 
-        await log(`  Analysis completed in ${analysisResult.metadata.analysisTimeMs}ms`);
-        await log(`  Changed files: ${analysisResult.changedFiles.length}`);
-        await log(`  UI-relevant entry points: ${analysisResult.metadata.entryPoints.length}`);
-        await log(`  Local dependencies: ${localFiles.length}`);
-        await log(`  NPM packages: ${analysisResult.dependencies.npmPackages.length}`);
-
         if (localFiles.length > 0) {
-          await sendProgress(10, 100, `Reading ${localFiles.length} analyzed files...`);
+          await sendProgress(10, 100, "Gathering relevant files...");
           files = readSpecificFiles(dir, localFiles, true, true);
           usedStaticAnalysis = true;
-          await log(`  Using static analysis: ${Object.keys(files).length} files to upload`);
         } else {
-          await log(`  No UI-relevant dependencies found, falling back to full upload`);
-          await sendProgress(10, 100, "Reading all project files...");
+          await sendProgress(10, 100, "Gathering project files...");
           files = readProjectFiles(dir, true);
         }
       } catch (analysisError) {
-        const errorMsg = analysisError instanceof Error ? analysisError.message : String(analysisError);
-        await log(`  Static analysis failed: ${errorMsg}`, "warning");
-        await log(`  Falling back to full project upload`);
-        await sendProgress(10, 100, "Reading all project files...");
+        await sendProgress(10, 100, "Gathering project files...");
         files = readProjectFiles(dir, true);
       }
     } else {
-      // Default: Read all project files
-      await sendProgress(8, 100, "Reading project files...");
+      await sendProgress(8, 100, "Gathering project files...");
       files = readProjectFiles(dir, true);
     }
 
     const fileCount = Object.keys(files).length;
     const totalSize = calculateChunkTotalSize(files);
     const sizeMB = (totalSize / (1024 * 1024)).toFixed(2);
-    await log(`  ${usedStaticAnalysis ? "Analyzed" : "Found"} ${fileCount} files (${sizeMB} MB)`);
+    await log(`${fileCount} files (${sizeMB} MB)`);
 
     // Step 4: Check auth
     let authData = getAuthData();
     if (!authData) {
-      await sendProgress(10, 100, "Authenticating with InFlight...");
+      await sendProgress(10, 100, "Signing in to Inflight...");
       try {
         authData = await authenticate((msg) => log(msg));
-        await log(`  Authenticated as ${authData.email || authData.userId}`);
       } catch (authError) {
         const authMessage = authError instanceof Error ? authError.message : String(authError);
-        await log(`Authentication failed: ${authMessage}`, "error");
         return {
-          content: [{ type: "text" as const, text: `Error: Authentication failed - ${authMessage}` }],
+          content: [{ type: "text" as const, text: `Couldn't sign in to Inflight. Try running /inflight login first.\n\n${authMessage}` }],
           isError: true,
         };
       }
-    } else {
-      await log(`  Using cached auth for ${authData.email || authData.userId}`);
     }
 
     // Step 5: Check if chunked upload is needed
@@ -489,8 +464,7 @@ server.tool(
     const useChunkedUpload = needsChunkedUpload(filesAsFileMap);
 
     if (useChunkedUpload) {
-      await log(`  Large project detected (${sizeMB} MB), using chunked upload...`);
-      await sendProgress(12, 100, "Large project - using chunked upload...");
+      await sendProgress(12, 100, "Uploading project...");
 
       try {
         const result = await callChunkedShare(
@@ -506,21 +480,16 @@ server.tool(
           args.existingProjectId,
           gitInfo.gitUrl,
           async (percentage: number, step: string) => {
-            await log(`[${percentage}%] ${step}`);
             await sendProgress(percentage, 100, step);
           },
           async (message) => {
-            await log(`Server error: ${message}`, "error");
+            await log(`Error: ${message}`, "error");
           }
         );
 
-        await sendProgress(100, 100, "Share complete!");
-        await log("========== SUCCESS ==========");
-        await log(`Preview URL: ${result.previewUrl}`);
-        await log(`InFlight URL: ${result.inflightUrl}`);
+        await sendProgress(100, 100, "Done!");
 
         openInBrowser(result.inflightUrl);
-        await log("Opening InFlight in browser...");
 
         return {
           content: [{
@@ -540,13 +509,10 @@ server.tool(
         };
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
-        await log("========== ERROR ==========", "error");
-        await log(message, "error");
-
         return {
           content: [{
             type: "text" as const,
-            text: `Error: ${message}`,
+            text: `Something went wrong while sharing: ${message}`,
           }],
           isError: true,
         };
@@ -554,7 +520,7 @@ server.tool(
     }
 
     // Step 5b: Standard upload (< 3MB)
-    await sendProgress(12, 100, "Starting share on server...");
+    await sendProgress(12, 100, "Uploading to Inflight...");
 
     try {
       const result = await callShareWithSSE(
@@ -572,30 +538,17 @@ server.tool(
           gitUrl: gitInfo.gitUrl,
         },
         authData.apiKey,
-        // Progress callback - called for each SSE progress event
         async (percentage: number, step: string) => {
-          // Log with percentage prefix for visibility (matches original inflight implementation)
-          await log(`[${percentage}%] ${step}`);
-          // Send MCP progress notification
           await sendProgress(percentage, 100, step);
         },
-        // Error callback
         async (message) => {
-          await log(`Server error: ${message}`, "error");
+          await log(`Error: ${message}`, "error");
         }
       );
 
-      await sendProgress(100, 100, "Share complete!");
-      await log("========== SUCCESS ==========");
-      await log(`Preview URL: ${result.previewUrl}`);
-      if (result.ngrokUrl) {
-        await log(`Ngrok URL: ${result.ngrokUrl}`);
-      }
-      await log(`InFlight URL: ${result.inflightUrl}`);
+      await sendProgress(100, 100, "Done!");
 
-      // Automatically open the InFlight URL in the browser
       openInBrowser(result.inflightUrl);
-      await log("Opening InFlight in browser...");
 
       return {
         content: [{
@@ -617,13 +570,10 @@ server.tool(
 
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
-      await log("========== ERROR ==========", "error");
-      await log(message, "error");
-
       return {
         content: [{
           type: "text" as const,
-          text: `Error: ${message}`,
+          text: `Something went wrong while sharing: ${message}`,
         }],
         isError: true,
       };
@@ -768,10 +718,8 @@ async function callChunkedShare(
   const chunks = chunkFiles(files);
   const stats = getChunkStats(chunks);
 
-  await onProgress(5, `Splitting into ${stats.totalChunks} chunks...`);
-
   // Step 1: Initialize chunked upload
-  await onProgress(8, "Initializing chunked upload...");
+  await onProgress(8, "Uploading project...");
   const initResponse = await fetch(`${SHARE_API_URL}/share/chunked/init`, {
     method: "POST",
     headers: {
@@ -800,7 +748,7 @@ async function callChunkedShare(
     const chunkFileCount = Object.keys(chunk).length;
     const chunkProgress = 10 + Math.floor((i / chunks.length) * 30); // 10-40%
 
-    await onProgress(chunkProgress, `Uploading chunk ${i + 1}/${chunks.length} (${chunkFileCount} files)...`);
+    await onProgress(chunkProgress, `Uploading files (${i + 1}/${chunks.length})...`);
 
     const uploadResponse = await fetch(`${SHARE_API_URL}/share/chunked/${sessionId}/upload`, {
       method: "POST",
@@ -825,7 +773,7 @@ async function callChunkedShare(
   }
 
   // Step 3: Finalize and get SSE stream
-  await onProgress(42, "Finalizing upload and starting analysis...");
+  await onProgress(42, "Building prototype...");
 
   const finalizeResponse = await fetch(`${SHARE_API_URL}/share/chunked/${sessionId}/finalize`, {
     method: "POST",
@@ -907,13 +855,10 @@ async function callChunkedShare(
 
 // Start the server
 async function main() {
-  console.error("[Local MCP] ========== STARTING ==========");
-  console.error(`[Local MCP] Share API: ${SHARE_API_URL}`);
-
   const transport = new StdioServerTransport();
   await server.connect(transport);
 
-  console.error("[Local MCP] Server connected and ready");
+  console.error("[Inflight] Ready");
 }
 
 main().catch((error) => {

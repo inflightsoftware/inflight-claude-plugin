@@ -1,7 +1,7 @@
 /**
- * InFlight Authentication Utilities
+ * Inflight Authentication Utilities
  *
- * Handles authentication flow for MCP InFlight.
+ * Handles authentication flow for MCP Inflight.
  * Uses a localhost HTTP server callback pattern for browser-based auth.
  *
  * Ported from inflight/packages/mcp-inflight/src/utils/auth.ts
@@ -118,10 +118,10 @@ async function openBrowser(url: string): Promise<void> {
 export type LogFn = (message: string) => void;
 
 /**
- * Authenticate with InFlight using browser-based OAuth flow
+ * Authenticate with Inflight using browser-based OAuth flow
  *
  * 1. Starts a temporary HTTP server on localhost
- * 2. Opens InFlight auth URL in browser
+ * 2. Opens Inflight auth URL in browser
  * 3. Waits for callback with API key
  * 4. Stores credentials locally
  */
@@ -152,7 +152,7 @@ export async function authenticate(log: LogFn): Promise<AuthData> {
           return;
         }
 
-        // Success response with InFlight branding
+        // Success response with Inflight branding
         const displayName = name || email || "there";
         const safeDisplayName = escapeHtml(displayName);
         res.writeHead(200, { "Content-Type": "text/html" });
@@ -162,7 +162,7 @@ export async function authenticate(log: LogFn): Promise<AuthData> {
             <head>
               <meta charset="utf-8">
               <meta name="viewport" content="width=device-width, initial-scale=1">
-              <title>Authenticated - InFlight</title>
+              <title>Authenticated - Inflight</title>
               <style>
                 * { margin: 0; padding: 0; box-sizing: border-box; }
                 body {
@@ -241,8 +241,8 @@ export async function authenticate(log: LogFn): Promise<AuthData> {
                 </div>
                 <h1>You're connected!</h1>
                 <p class="greeting">Welcome, ${safeDisplayName}</p>
-                <p class="message">InFlight is now connected to Claude Code. You can share prototypes and get feedback directly from your terminal.</p>
-                <p class="close-hint">This window will close automatically...</p>
+                <p class="message">You can close this tab and head back to your terminal.</p>
+                <p class="close-hint">Closing automatically...</p>
               </div>
               <script>setTimeout(() => window.close(), 3000);</script>
             </body>
@@ -285,13 +285,12 @@ export async function authenticate(log: LogFn): Promise<AuthData> {
       const port = address.port;
       const authUrl = `${INFLIGHT_BASE}/mcp/auth?callback_port=${port}`;
 
-      log("Opening browser for InFlight authentication...");
-      log(`If browser doesn't open, visit: ${authUrl}`);
+      log(`Signing in — opening browser...`);
 
       try {
         await openBrowser(authUrl);
       } catch (error) {
-        log(`Could not open browser automatically. Please visit: ${authUrl}`);
+        log(`Couldn't open browser. Visit this link to sign in: ${authUrl}`);
       }
     });
 

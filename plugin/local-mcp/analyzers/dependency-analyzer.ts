@@ -6,7 +6,6 @@
  * by doing deterministic analysis locally instead of in the cloud.
  */
 
-import * as esbuild from "esbuild";
 import * as path from "path";
 import * as fs from "fs";
 import type {
@@ -125,14 +124,14 @@ function createAnalysisPlugin(
     string,
     { resolvedPath: string | null; imports: Set<string> }
   >
-): esbuild.Plugin {
+): any {
   return {
     name: "dependency-analyzer",
-    setup(build: esbuild.PluginBuild) {
+    setup(build: any) {
       // Handle path aliases (e.g., @/ -> ./src/)
       for (const [alias, target] of Object.entries(pathAliases)) {
         const filter = new RegExp(`^${alias.replace("/", "\\/")}`);
-        build.onResolve({ filter }, (args: esbuild.OnResolveArgs) => {
+        build.onResolve({ filter }, (args: any) => {
           const resolvedPath = args.path.replace(alias, target);
           const fullPath = path.resolve(projectRoot, resolvedPath);
 
@@ -160,7 +159,7 @@ function createAnalysisPlugin(
       }
 
       // Handle workspace packages (e.g., @inflight/*)
-      build.onResolve({ filter: /^@[^/]+\// }, (args: esbuild.OnResolveArgs) => {
+      build.onResolve({ filter: /^@[^/]+\// }, (args: any) => {
         const packageName = args.path.split("/").slice(0, 2).join("/");
 
         // Check if it's a workspace package by looking in common locations
@@ -195,7 +194,7 @@ function createAnalysisPlugin(
       });
 
       // Handle bare npm packages (e.g., react, framer-motion)
-      build.onResolve({ filter: /^[^.@/]/ }, (args: esbuild.OnResolveArgs) => {
+      build.onResolve({ filter: /^[^.@/]/ }, (args: any) => {
         const packageName = args.path.split("/")[0];
         const existing = npmPackages.get(packageName) || new Set<string>();
         const subpath = args.path.slice(packageName.length + 1);
@@ -206,7 +205,7 @@ function createAnalysisPlugin(
       });
 
       // Handle relative imports
-      build.onResolve({ filter: /^\./ }, (args: esbuild.OnResolveArgs) => {
+      build.onResolve({ filter: /^\./ }, (args: any) => {
         const resolvedPath = path.resolve(
           path.dirname(args.importer),
           args.path
@@ -237,7 +236,7 @@ function createAnalysisPlugin(
       // Track all loaded files
       build.onLoad(
         { filter: /\.(ts|tsx|js|jsx)$/ },
-        async (args: esbuild.OnLoadArgs) => {
+        async (args: any) => {
           const relativePath = path.relative(projectRoot, args.path);
           resolvedFiles.add(relativePath);
 
@@ -286,6 +285,13 @@ export async function analyzeDependencies(
   const absoluteEntryPoints = entryPoints.map((e) =>
     path.resolve(projectRoot, e)
   );
+
+  let esbuild: any;
+  try {
+    esbuild = await import("esbuild");
+  } catch {
+    throw new Error("esbuild is not installed. Install it with: npm install esbuild");
+  }
 
   try {
     await esbuild.build({

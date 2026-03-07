@@ -1,11 +1,11 @@
 ---
 name: full-share
-description: Share a full local project to InFlight for feedback and collaboration. Use for sharing entire projects rather than branch changes.
+description: Share a full local project to Inflight for feedback and collaboration. Use for sharing entire projects rather than branch changes.
 ---
 
-# Full Share Project
+# Full Share
 
-Share a full local project to InFlight for feedback and collaboration.
+Share a full local project to Inflight for feedback and collaboration.
 
 ## Arguments
 
@@ -15,9 +15,7 @@ $ARGUMENTS - Optional path to the project directory. If not provided, uses curre
 
 ### Note
 
-For sharing UI changes from a feature branch, use `/inflight:share` instead. It analyzes your git diff and creates a focused prototype.
-
-This command shares the full project as-is.
+For sharing UI changes from a feature branch, use `/inflight:share` instead — it focuses on just your recent changes.
 
 ### 1. Determine project path
 
@@ -27,13 +25,13 @@ Use the provided path argument or current working directory.
 
 Look for `.env`, `.env.local`, `.env.development`, `.env.production` in the project directory.
 
-**Only if .env files exist**, ask: "Found .env files. These may contain sensitive API keys. Exclude them from sharing? (recommended: yes)"
+**Only if .env files exist**, ask: "Found .env files — these may contain API keys. Exclude them? (recommended: yes)"
 
 ### 3. Check for git changes (optional)
 
 If this is a git repository on a feature branch:
 1. Run `git log main..HEAD --oneline 2>/dev/null || git log master..HEAD --oneline 2>/dev/null`
-2. If commits exist, suggest using `/inflight:share` workflow instead for better analysis
+2. If commits exist, suggest using `/inflight:share` instead for a more focused share
 
 ### 4. Read project files
 
@@ -44,7 +42,7 @@ Read all source files, **excluding**:
 - `*.lock` files
 - `.env*` files (unless user chose to include)
 
-### 5. Deploy to InFlight
+### 5. Deploy to Inflight
 
 Use the `share` tool with an empty gitDiff:
 
@@ -62,17 +60,8 @@ Use the `share` tool with an empty gitDiff:
 
 ### 6. Display result
 
-Show the InFlight URL:
-
 ```
-Shared!
-
-InFlight: [URL]
+Shared to Inflight: [URL]
 
 Share this link with your team for feedback.
 ```
-
-## Related Commands
-
-- `/inflight:share` - Share UI changes from a feature branch (recommended)
-- `/inflight:inflight` - Manage prototypes
