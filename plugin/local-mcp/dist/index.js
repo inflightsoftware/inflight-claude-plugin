@@ -3645,6 +3645,110 @@ server.tool(
   }
 );
 server.tool(
+  "list_workspaces",
+  "List all InFlight workspaces the user belongs to. Shows which workspace is currently selected.",
+  {},
+  async () => {
+    const authData = getAuthData();
+    if (!authData) {
+      return {
+        content: [{ type: "text", text: "Not authenticated. Please run inflight_login first." }],
+        isError: true
+      };
+    }
+    try {
+      const response = await fetch(`${SHARE_API_URL}/share/workspaces`, {
+        headers: { Authorization: `Bearer ${authData.apiKey}` }
+      });
+      if (!response.ok) {
+        return {
+          content: [{ type: "text", text: `Error fetching workspaces: ${response.statusText}` }],
+          isError: true
+        };
+      }
+      const result = await response.json();
+      return {
+        content: [{
+          type: "text",
+          text: JSON.stringify({
+            workspaces: result.workspaces,
+            currentWorkspaceId: authData.defaultWorkspaceId || null
+          }, null, 2)
+        }]
+      };
+    } catch {
+      return {
+        content: [{ type: "text", text: `Error: Could not reach Share API at ${SHARE_API_URL}` }],
+        isError: true
+      };
+    }
+  }
+);
+server.tool(
+  "set_workspace",
+  "Set the active InFlight workspace. This workspace will be used for sharing.",
+  {
+    workspaceId: z.string().describe("The workspace ID to set as active")
+  },
+  async (args) => {
+    const authData = getAuthData();
+    if (!authData) {
+      return {
+        content: [{ type: "text", text: "Not authenticated. Please run inflight_login first." }],
+        isError: true
+      };
+    }
+    try {
+      const response = await fetch(`${SHARE_API_URL}/share/workspaces`, {
+        headers: { Authorization: `Bearer ${authData.apiKey}` }
+      });
+      if (response.ok) {
+        const result = await response.json();
+        const workspace = result.workspaces.find((ws) => ws.id === args.workspaceId);
+        if (!workspace) {
+          return {
+            content: [{
+              type: "text",
+              text: JSON.stringify({
+                error: "Workspace not found or you don't have access",
+                availableWorkspaces: result.workspaces
+              }, null, 2)
+            }],
+            isError: true
+          };
+        }
+        authData.defaultWorkspaceId = args.workspaceId;
+        saveAuthData(authData);
+        return {
+          content: [{
+            type: "text",
+            text: JSON.stringify({
+              success: true,
+              message: `Active workspace set to "${workspace.name}"`,
+              workspaceId: workspace.id,
+              workspaceName: workspace.name,
+              workspaceSlug: workspace.slug
+            }, null, 2)
+          }]
+        };
+      }
+    } catch {
+    }
+    authData.defaultWorkspaceId = args.workspaceId;
+    saveAuthData(authData);
+    return {
+      content: [{
+        type: "text",
+        text: JSON.stringify({
+          success: true,
+          message: `Active workspace set to ${args.workspaceId}`,
+          workspaceId: args.workspaceId
+        }, null, 2)
+      }]
+    };
+  }
+);
+server.tool(
   "get_git_info",
   "Get branch and change info from a git project",
   {
@@ -3781,34 +3885,70 @@ ${authMessage}` }],
         };
       }
     }
-    let useGitClone = false;
-    let githubAppTip = null;
-    if (gitInfo.gitUrl && args.workspaceId) {
+    let resolvedWorkspaceId = args.workspaceId || authData.defaultWorkspaceId;
+    let resolvedWorkspaceName;
+    if (!resolvedWorkspaceId) {
       try {
-        await sendProgress(9, 100, "Checking repository access...");
-        const checkResponse = await fetch(`${SHARE_API_URL}/share/check-clone`, {
-          method: "POST",
+        await sendProgress(9, 100, "Looking up your workspaces...");
+        const wsResponse = await fetch(`${SHARE_API_URL}/share/workspaces`, {
           headers: {
-            "Content-Type": "application/json",
             Authorization: `Bearer ${authData.apiKey}`
-          },
-          body: JSON.stringify({
-            gitUrl: gitInfo.gitUrl,
-            workspaceId: args.workspaceId
-          })
+          }
         });
-        if (checkResponse.ok) {
-          const checkResult = await checkResponse.json();
-          useGitClone = checkResult.cloneAvailable === true;
-          if (useGitClone) {
-            await log(`  Git clone available for ${gitInfo.gitUrl}`);
-          } else if (gitInfo.gitUrl.includes("github.com")) {
-            await log(`  GitHub repo detected but InFlight GitHub App not installed for this workspace`);
-            githubAppTip = "Tip: Install the InFlight GitHub App to make sharing faster. Instead of uploading files, InFlight can clone your repo directly. Install it here: https://github.com/apps/inflight-app/installations/new";
+        if (wsResponse.ok) {
+          const wsResult = await wsResponse.json();
+          if (wsResult.workspaces.length === 0) {
+            return {
+              content: [{ type: "text", text: "Error: You don't belong to any InFlight workspaces. Please create a workspace first at https://www.inflight.co" }],
+              isError: true
+            };
+          } else {
+            resolvedWorkspaceId = wsResult.workspaces[0].id;
+            resolvedWorkspaceName = wsResult.workspaces[0].name;
+            authData.defaultWorkspaceId = resolvedWorkspaceId;
+            saveAuthData(authData);
+            await log(`  Auto-selected workspace: ${resolvedWorkspaceName} (${wsResult.workspaces.length} workspace${wsResult.workspaces.length > 1 ? "s" : ""} available)`);
           }
         }
       } catch {
-        await log(`  Clone check failed, falling back to file upload`);
+        await log("  Workspace lookup failed, proceeding without workspace selection");
+      }
+    }
+    let useGitClone = false;
+    let githubAppTip = null;
+    let branchNotPushedTip = null;
+    if (gitInfo.gitUrl && resolvedWorkspaceId) {
+      if (!gitInfo.branchExistsOnRemote) {
+        await log(`  Branch "${gitInfo.currentBranch}" not found on remote \u2014 clone mode requires pushed branches`);
+        branchNotPushedTip = `Your branch "${gitInfo.currentBranch}" hasn't been pushed to the remote yet. Push it with \`git push -u origin ${gitInfo.currentBranch}\` to enable faster sharing via git clone.`;
+      } else {
+        try {
+          await sendProgress(9, 100, "Checking repository access...");
+          const checkResponse = await fetch(`${SHARE_API_URL}/share/check-clone`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${authData.apiKey}`
+            },
+            body: JSON.stringify({
+              gitUrl: gitInfo.gitUrl,
+              workspaceId: resolvedWorkspaceId
+            })
+          });
+          if (checkResponse.ok) {
+            const checkResult = await checkResponse.json();
+            useGitClone = checkResult.cloneAvailable === true;
+            if (useGitClone) {
+              await log(`  Git clone available for ${gitInfo.gitUrl}`);
+            } else if (gitInfo.gitUrl.includes("github")) {
+              await log(`  GitHub repo detected but InFlight GitHub App not installed for this workspace`);
+              const installUrl = checkResult.workspaceSlug ? `https://www.inflight.co/${checkResult.workspaceSlug}/settings/integrations` : "https://www.inflight.co";
+              githubAppTip = `The InFlight GitHub App is not installed for this repository. Installing it will make sharing significantly faster by cloning your repo directly instead of uploading files. Would you like to install it? Go to: ${installUrl}`;
+            }
+          }
+        } catch {
+          await log(`  Clone check failed, falling back to file upload`);
+        }
       }
     }
     if (useGitClone) {
@@ -3824,7 +3964,7 @@ ${authMessage}` }],
             },
             gitUrl: gitInfo.gitUrl,
             currentBranch: gitInfo.currentBranch || "unknown",
-            workspaceId: args.workspaceId,
+            workspaceId: resolvedWorkspaceId,
             existingProjectId: args.existingProjectId
           },
           authData.apiKey,
@@ -3856,7 +3996,8 @@ ${authMessage}` }],
               versionId: result.versionId,
               projectId: result.projectId,
               cloneMode: true,
-              diffSummary: result.diffSummary
+              diffSummary: result.diffSummary,
+              ...resolvedWorkspaceName && { workspace: resolvedWorkspaceName }
             }, null, 2)
           }]
         };
@@ -3917,7 +4058,7 @@ ${authMessage}` }],
             currentBranch: gitInfo.currentBranch || "unknown"
           },
           authData.apiKey,
-          args.workspaceId,
+          resolvedWorkspaceId,
           args.existingProjectId,
           gitInfo.gitUrl,
           async (percentage, step) => {
@@ -3942,7 +4083,9 @@ ${authMessage}` }],
               projectId: result.projectId,
               fileCount,
               chunkedUpload: true,
-              ...githubAppTip && { githubAppTip }
+              ...resolvedWorkspaceName && { workspace: resolvedWorkspaceName },
+              ...githubAppTip && { githubAppTip },
+              ...branchNotPushedTip && { branchNotPushedTip }
             }, null, 2)
           }]
         };
@@ -3969,7 +4112,7 @@ ${authMessage}` }],
             currentBranch: gitInfo.currentBranch || "unknown"
           },
           userId: authData.userId,
-          workspaceId: args.workspaceId,
+          workspaceId: resolvedWorkspaceId,
           existingProjectId: args.existingProjectId,
           gitUrl: gitInfo.gitUrl
         },
@@ -4000,7 +4143,9 @@ ${authMessage}` }],
             projectId: result.projectId,
             fileCount,
             diffSummary: result.diffSummary,
-            ...githubAppTip && { githubAppTip }
+            ...resolvedWorkspaceName && { workspace: resolvedWorkspaceName },
+            ...githubAppTip && { githubAppTip },
+            ...branchNotPushedTip && { branchNotPushedTip }
           }, null, 2)
         }]
       };

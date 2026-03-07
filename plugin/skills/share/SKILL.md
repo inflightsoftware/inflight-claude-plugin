@@ -44,6 +44,12 @@ Shared to Inflight: [inflightUrl]
 Share this link with your team for feedback.
 ```
 
+If the result includes a `workspace` field, mention which workspace was used. The workspace is auto-selected and remembered. If the user wants to switch, they can use the `set_workspace` or `list_workspaces` MCP tools.
+
+If the result includes a `githubAppTip`, display it to the user after the share result. This encourages them to install the InFlight GitHub App for faster sharing.
+
+If the result includes a `branchNotPushedTip`, display it to the user after the share result. This lets them know they can push their branch to enable faster git clone-based sharing.
+
 ## Error Handling
 
 - If not in a git repository: "This folder isn't a git repo — make sure you're in the right project directory."
