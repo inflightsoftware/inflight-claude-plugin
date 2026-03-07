@@ -9,7 +9,7 @@ Share UI prototypes for review, directly from your AI coding tool.
 ### Claude Code (recommended)
 
 ```bash
-claude mcp add --global inflight -- npx inflight-mcp
+claude mcp add --scope user inflight -- npx inflight-mcp
 ```
 
 ### Claude Desktop
