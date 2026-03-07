@@ -1,0 +1,30 @@
+{
+  "name": "inflight-mcp",
+  "version": "1.0.0",
+  "description": "Inflight MCP server — share UI prototypes for review from any AI coding tool",
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "inflight-mcp": "./index.js"
+  },
+  "files": [
+    "index.js"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/inflightsoftware/inflight-claude-plugin"
+  },
+  "homepage": "https://inflight.co",
+  "keywords": [
+    "mcp",
+    "inflight",
+    "claude",
+    "prototype",
+    "ui-review",
+    "share",
+    "model-context-protocol"
+  ],
+  "engines": {
+    "node": ">=18"
+  }
+}

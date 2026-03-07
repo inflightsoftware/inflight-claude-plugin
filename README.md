@@ -1,107 +1,85 @@
-# Inflight Claude Code Plugin
+# Inflight
 
-Share and collaborate on UI prototypes via [Inflight](https://inflight.co).
+Share UI prototypes for review, directly from your AI coding tool.
 
-This plugin allows you to share UI changes from your feature branch as interactive prototypes for team review, directly from Claude Code.
+[Inflight](https://inflight.co) lets you share interactive prototypes of your UI changes with your team — no deploy pipeline needed.
 
-## Installation
+## Install
+
+### Claude Code (recommended)
+
+```bash
+claude mcp add inflight-mcp -- npx inflight-mcp
+```
+
+### Claude Code Plugin (includes /share slash commands)
 
 ```bash
 claude plugin marketplace add https://github.com/inflightsoftware/inflight-claude-plugin && claude plugin install inflight
 ```
 
+### Claude Desktop
+
+Add to your config (`~/Library/Application Support/Claude/claude_desktop_config.json`):
+
+```json
+{
+  "mcpServers": {
+    "inflight": {
+      "command": "npx",
+      "args": ["inflight-mcp"]
+    }
+  }
+}
+```
+
+### Any MCP client
+
+```bash
+npx inflight-mcp
+```
+
+This starts a standard stdio MCP server that works with any MCP-compatible client.
+
 ## Requirements
 
-- [Claude Code CLI](https://claude.ai/code)
 - Node.js 18+
-- An Inflight account (sign up at [inflight.co](https://inflight.co))
+- An Inflight account ([inflight.co](https://inflight.co))
 
 ## Usage
 
-### /share
+Once installed, just ask Claude to share your project:
 
-Share UI changes from your feature branch for review.
+> "Share my UI changes to Inflight"
 
-```
-/share
-```
+Or if you installed the plugin, use the slash commands:
 
-This will:
-1. Analyze your git diff (feature branch vs main/master)
-2. Upload your code to a cloud sandbox
-3. Run Claude analysis to create a minimal Vite prototype
-4. Deploy the prototype with a shareable Inflight URL
+- `/share` — Share UI changes from your feature branch
+- `/full-share` — Share the entire project
+- `/inflight` — Manage prototypes (list, delete)
 
-### /full-share
+## How it works
 
-Share the entire project (not just branch changes).
-
-```
-/full-share
-```
-
-### /inflight
-
-Manage prototypes and authentication.
-
-```
-/inflight login     # Authenticate with Inflight
-/inflight logout    # Clear authentication
-/inflight list      # List your prototypes
-/inflight delete    # Delete a prototype
-```
+1. Reads your branch changes (git diff against main/master)
+2. Uploads your code to a cloud sandbox
+3. Builds a live prototype of your UI changes
+4. Creates a shareable Inflight link and opens it in your browser
 
 ## Authentication
 
-The first time you use a share command, you'll be prompted to authenticate:
-
-1. A browser window opens to Inflight
-2. Sign in with your Inflight account
-3. The plugin receives an API key automatically
-
-Your API key is stored locally at `~/.claude/mcp-inflight-auth.json`.
-
-## How It Works
-
-1. **Git Analysis**: Reads your branch diff against main/master
-2. **Cloud Sandbox**: Uploads files to a secure CodeSandbox environment
-3. **Claude Analysis**: Runs Claude to create a minimal Vite prototype focusing on UI changes
-4. **Inflight Deployment**: Creates a shareable Inflight version with the live prototype
-
-## Skills & MCP Tools
-
-The plugin provides these skills (slash commands):
-
-| Skill | Description |
-|-------|-------------|
-| `/share` | Share branch changes as a prototype |
-| `/full-share` | Share the entire project |
-| `/inflight` | Manage prototypes and auth |
-
-And these MCP tools (used internally by skills):
-
-| Tool | Description |
-|------|-------------|
-| `share` | Analyze and deploy UI changes |
-| `check_existing_versions` | Find prior shares for a git repo |
-| `inflight_login` | Authenticate with Inflight |
-| `inflight_logout` | Clear authentication |
+The first time you share, a browser window opens to sign in to Inflight. After that, your session is saved locally at `~/.claude/mcp-inflight-auth.json`.
 
 ## Troubleshooting
 
-### "Authentication failed"
+**Can't sign in?** Run `inflight_logout` (or `/inflight logout`) to clear your session, then try again.
 
-1. Run `/inflight logout` to clear cached auth
-2. Run `/inflight login` to re-authenticate
-3. Ensure you have an Inflight account at [inflight.co](https://inflight.co)
-
-### Update the plugin
+**Update the plugin:**
 
 ```bash
 claude plugin marketplace update inflight && claude plugin uninstall inflight && rm -rf ~/.claude/plugins/cache/inflight && claude plugin install inflight
 ```
 
-Then restart Claude Code (new terminal) to apply the changes.
+Then restart Claude Code (new terminal).
 
 ## License
 
