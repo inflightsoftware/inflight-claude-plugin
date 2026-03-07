@@ -21943,14 +21943,20 @@ function getGitInfo(dir) {
     }
     let diff = "";
     let diffStat = "";
-    try {
-      diff = execSync2(`git diff ${baseBranch}...HEAD`, { cwd: dir, encoding: "utf-8", maxBuffer: 10 * 1024 * 1024 });
-      diffStat = execSync2(`git diff ${baseBranch}...HEAD --stat`, { cwd: dir, encoding: "utf-8" });
-    } catch {
+    const diffTargets = [
+      `${baseBranch}...HEAD`,
+      `origin/${baseBranch}...HEAD`,
+      "HEAD"
+    ];
+    for (const target of diffTargets) {
       try {
-        diff = execSync2("git diff HEAD", { cwd: dir, encoding: "utf-8", maxBuffer: 10 * 1024 * 1024 });
-        diffStat = execSync2("git diff HEAD --stat", { cwd: dir, encoding: "utf-8" });
+        const cmd = target === "HEAD" ? "git diff HEAD" : `git diff ${target}`;
+        diff = execSync2(cmd, { cwd: dir, encoding: "utf-8", maxBuffer: 10 * 1024 * 1024 });
+        diffStat = execSync2(`${cmd} --stat`, { cwd: dir, encoding: "utf-8" });
+        if (diff)
+          break;
       } catch {
+        continue;
       }
     }
     return {
@@ -22222,11 +22228,9 @@ server.tool(
         isError: true
       };
     }
-    if (!gitInfo.diff) {
-      return {
-        content: [{ type: "text", text: "No changes found to share. Make sure you're on a feature branch with commits." }],
-        isError: true
-      };
+    const isFullShare = !gitInfo.diff;
+    if (isFullShare) {
+      await log("No branch diff found \u2014 sharing the full project instead.");
     }
     await log(`Branch: ${gitInfo.currentBranch}`);
     let files;
@@ -22606,13 +22610,12 @@ server.prompt(
             text: `Share my full project to Inflight for feedback.
 
 Steps:
-1. Check for .env files in the project. If found, ask me whether to exclude them (recommended: yes).
-2. If this is a git repo on a feature branch with commits, suggest using /partial-share instead for a more focused share.
-3. Read all source files, excluding: .git/, node_modules/, dist/, build/, .next/, out/, *.lock files, and .env* files (unless I chose to include them).
-4. Call the \`share\` MCP tool with the files, an empty gitDiff, and directory set to the current project directory (${args.directory || "use your working directory"}).
-5. Show the result: "Shared to Inflight: [URL] \u2014 Share this link with your team for feedback."
+1. If this is a git repo on a feature branch with commits, suggest using /partial-share instead for a more focused share.
+2. Read all source files, excluding: .git/, node_modules/, dist/, build/, .next/, out/, *.lock files, and .env* files. Always exclude .env files \u2014 never include them.
+3. Call the \`share\` MCP tool with the files, an empty gitDiff, and directory set to the current project directory (${args.directory || "use your working directory"}).
+4. Show the result: "Shared to Inflight: [URL] \u2014 Share this link with your team for feedback."
 
-IMPORTANT: Always pass the \`directory\` parameter to the share tool \u2014 do not rely on defaults.`
+IMPORTANT: Always pass the \`directory\` parameter to the share tool \u2014 do not rely on defaults. Always exclude .env files.`
           }
         }
       ]
