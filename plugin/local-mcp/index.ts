@@ -478,6 +478,91 @@ server.tool(
   }
 );
 
+// Tool: Check Existing Versions
+server.tool(
+  "check_existing_versions",
+  "Check if a git repository has been shared to Inflight before. Returns project info and version count if found. Use this before sharing to let the user decide whether to add a new version or create a new project.",
+  {
+    directory: z.string().optional().describe("Project directory (defaults to cwd)"),
+    workspaceId: z.string().optional().describe("Inflight workspace ID to check in"),
+  },
+  async (args) => {
+    const dir = args.directory || process.cwd();
+
+    // Get git remote URL
+    const gitInfo = getGitInfo(dir);
+    if (!gitInfo.isGitRepo || !gitInfo.gitUrl) {
+      return {
+        content: [{ type: "text" as const, text: JSON.stringify({ found: false, error: "Not a git repository or no remote configured" }) }],
+      };
+    }
+
+    // Ensure authenticated
+    if (!isAuthenticated()) {
+      return {
+        content: [{ type: "text" as const, text: JSON.stringify({ found: false, error: "Not authenticated. Please run inflight_login first." }) }],
+      };
+    }
+
+    const auth = getAuthData();
+    if (!auth?.apiKey) {
+      return {
+        content: [{ type: "text" as const, text: JSON.stringify({ found: false, error: "No API key. Please run inflight_login first." }) }],
+      };
+    }
+
+    try {
+      const url = new URL(`${SHARE_API_URL}/share/lookup`);
+      url.searchParams.set("gitRemoteUrl", gitInfo.gitUrl);
+      if (args.workspaceId) {
+        url.searchParams.set("workspaceId", args.workspaceId);
+      }
+
+      const response = await fetch(url.toString(), {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${auth.apiKey}`,
+        },
+      });
+
+      if (!response.ok) {
+        const text = await response.text();
+        console.error(`[Local MCP] Lookup failed: ${response.status} ${text}`);
+        return {
+          content: [{ type: "text" as const, text: JSON.stringify({ found: false, error: `Lookup failed: ${response.status}` }) }],
+        };
+      }
+
+      const data = await response.json() as { found: boolean; project: any };
+
+      if (data.found && data.project) {
+        return {
+          content: [{
+            type: "text" as const,
+            text: JSON.stringify({
+              found: true,
+              project: data.project,
+              message: `This repository has been shared before. Project "${data.project.name}" has ${data.project.versionCount} version(s). ` +
+                `To add a new version (V${data.project.versionCount + 1}), use existingProjectId="${data.project.id}" when calling share. ` +
+                `Otherwise, a new project will be created.`,
+            }, null, 2),
+          }],
+        };
+      }
+
+      return {
+        content: [{ type: "text" as const, text: JSON.stringify({ found: false, message: "No existing project found for this repository. A new project will be created." }) }],
+      };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      console.error(`[Local MCP] check_existing_versions failed: ${message}`);
+      return {
+        content: [{ type: "text" as const, text: JSON.stringify({ found: false, error: message }) }],
+      };
+    }
+  }
+);
+
 // Tool: Share
 server.tool(
   "share",
