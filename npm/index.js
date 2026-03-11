@@ -29,9 +29,9 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
   mod
 ));
 
-// node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/compile/codegen/code.js
+// node_modules/ajv/dist/compile/codegen/code.js
 var require_code = __commonJS({
-  "node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/compile/codegen/code.js"(exports) {
+  "node_modules/ajv/dist/compile/codegen/code.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.regexpCode = exports.getEsmExportName = exports.getProperty = exports.safeStringify = exports.stringify = exports.strConcat = exports.addCodeArg = exports.str = exports._ = exports.nil = exports._Code = exports.Name = exports.IDENTIFIER = exports._CodeOrName = void 0;
@@ -183,9 +183,9 @@ var require_code = __commonJS({
   }
 });
 
-// node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/compile/codegen/scope.js
+// node_modules/ajv/dist/compile/codegen/scope.js
 var require_scope = __commonJS({
-  "node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/compile/codegen/scope.js"(exports) {
+  "node_modules/ajv/dist/compile/codegen/scope.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.ValueScope = exports.ValueScopeName = exports.Scope = exports.varKinds = exports.UsedValueState = void 0;
@@ -328,9 +328,9 @@ var require_scope = __commonJS({
   }
 });
 
-// node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/compile/codegen/index.js
+// node_modules/ajv/dist/compile/codegen/index.js
 var require_codegen = __commonJS({
-  "node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/compile/codegen/index.js"(exports) {
+  "node_modules/ajv/dist/compile/codegen/index.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.or = exports.and = exports.not = exports.CodeGen = exports.operators = exports.varKinds = exports.ValueScopeName = exports.ValueScope = exports.Scope = exports.Name = exports.regexpCode = exports.stringify = exports.getProperty = exports.nil = exports.strConcat = exports.str = exports._ = void 0;
@@ -1048,9 +1048,9 @@ var require_codegen = __commonJS({
   }
 });
 
-// node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/compile/util.js
+// node_modules/ajv/dist/compile/util.js
 var require_util = __commonJS({
-  "node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/compile/util.js"(exports) {
+  "node_modules/ajv/dist/compile/util.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.checkStrictMode = exports.getErrorPath = exports.Type = exports.useFunc = exports.setEvaluated = exports.evaluatedPropsToName = exports.mergeEvaluated = exports.eachItem = exports.unescapeJsonPointer = exports.escapeJsonPointer = exports.escapeFragment = exports.unescapeFragment = exports.schemaRefOrVal = exports.schemaHasRulesButRef = exports.schemaHasRules = exports.checkUnknownRules = exports.alwaysValidSchema = exports.toHash = void 0;
@@ -1215,9 +1215,9 @@ var require_util = __commonJS({
   }
 });
 
-// node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/compile/names.js
+// node_modules/ajv/dist/compile/names.js
 var require_names = __commonJS({
-  "node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/compile/names.js"(exports) {
+  "node_modules/ajv/dist/compile/names.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var codegen_1 = require_codegen();
@@ -1254,9 +1254,9 @@ var require_names = __commonJS({
   }
 });
 
-// node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/compile/errors.js
+// node_modules/ajv/dist/compile/errors.js
 var require_errors = __commonJS({
-  "node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/compile/errors.js"(exports) {
+  "node_modules/ajv/dist/compile/errors.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.extendErrors = exports.resetErrorsCount = exports.reportExtraError = exports.reportError = exports.keyword$DataError = exports.keywordError = void 0;
@@ -1376,9 +1376,9 @@ var require_errors = __commonJS({
   }
 });
 
-// node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/compile/validate/boolSchema.js
+// node_modules/ajv/dist/compile/validate/boolSchema.js
 var require_boolSchema = __commonJS({
-  "node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/compile/validate/boolSchema.js"(exports) {
+  "node_modules/ajv/dist/compile/validate/boolSchema.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.boolOrEmptySchema = exports.topBoolOrEmptySchema = void 0;
@@ -1427,9 +1427,9 @@ var require_boolSchema = __commonJS({
   }
 });
 
-// node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/compile/rules.js
+// node_modules/ajv/dist/compile/rules.js
 var require_rules = __commonJS({
-  "node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/compile/rules.js"(exports) {
+  "node_modules/ajv/dist/compile/rules.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.getRules = exports.isJSONType = void 0;
@@ -1458,9 +1458,9 @@ var require_rules = __commonJS({
   }
 });
 
-// node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/compile/validate/applicability.js
+// node_modules/ajv/dist/compile/validate/applicability.js
 var require_applicability = __commonJS({
-  "node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/compile/validate/applicability.js"(exports) {
+  "node_modules/ajv/dist/compile/validate/applicability.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.shouldUseRule = exports.shouldUseGroup = exports.schemaHasRulesForType = void 0;
@@ -1481,9 +1481,9 @@ var require_applicability = __commonJS({
   }
 });
 
-// node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/compile/validate/dataType.js
+// node_modules/ajv/dist/compile/validate/dataType.js
 var require_dataType = __commonJS({
-  "node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/compile/validate/dataType.js"(exports) {
+  "node_modules/ajv/dist/compile/validate/dataType.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.reportTypeError = exports.checkDataTypes = exports.checkDataType = exports.coerceAndCheckDataType = exports.getJSONTypes = exports.getSchemaTypes = exports.DataType = void 0;
@@ -1665,9 +1665,9 @@ var require_dataType = __commonJS({
   }
 });
 
-// node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/compile/validate/defaults.js
+// node_modules/ajv/dist/compile/validate/defaults.js
 var require_defaults = __commonJS({
-  "node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/compile/validate/defaults.js"(exports) {
+  "node_modules/ajv/dist/compile/validate/defaults.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.assignDefaults = void 0;
@@ -1702,9 +1702,9 @@ var require_defaults = __commonJS({
   }
 });
 
-// node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/vocabularies/code.js
+// node_modules/ajv/dist/vocabularies/code.js
 var require_code2 = __commonJS({
-  "node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/vocabularies/code.js"(exports) {
+  "node_modules/ajv/dist/vocabularies/code.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.validateUnion = exports.validateArray = exports.usePattern = exports.callValidateCode = exports.schemaProperties = exports.allSchemaProperties = exports.noPropertyInData = exports.propertyInData = exports.isOwnProperty = exports.hasPropFunc = exports.reportMissingProp = exports.checkMissingProp = exports.checkReportMissingProp = void 0;
@@ -1835,9 +1835,9 @@ var require_code2 = __commonJS({
   }
 });
 
-// node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/compile/validate/keyword.js
+// node_modules/ajv/dist/compile/validate/keyword.js
 var require_keyword = __commonJS({
-  "node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/compile/validate/keyword.js"(exports) {
+  "node_modules/ajv/dist/compile/validate/keyword.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.validateKeywordUsage = exports.validSchemaType = exports.funcKeywordCode = exports.macroKeywordCode = void 0;
@@ -1953,9 +1953,9 @@ var require_keyword = __commonJS({
   }
 });
 
-// node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/compile/validate/subschema.js
+// node_modules/ajv/dist/compile/validate/subschema.js
 var require_subschema = __commonJS({
-  "node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/compile/validate/subschema.js"(exports) {
+  "node_modules/ajv/dist/compile/validate/subschema.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.extendSubschemaMode = exports.extendSubschemaData = exports.getSubschema = void 0;
@@ -2036,9 +2036,9 @@ var require_subschema = __commonJS({
   }
 });
 
-// node_modules/.pnpm/fast-deep-equal@3.1.3/node_modules/fast-deep-equal/index.js
+// node_modules/fast-deep-equal/index.js
 var require_fast_deep_equal = __commonJS({
-  "node_modules/.pnpm/fast-deep-equal@3.1.3/node_modules/fast-deep-equal/index.js"(exports, module) {
+  "node_modules/fast-deep-equal/index.js"(exports, module) {
     "use strict";
     module.exports = function equal(a, b) {
       if (a === b)
@@ -2081,9 +2081,9 @@ var require_fast_deep_equal = __commonJS({
   }
 });
 
-// node_modules/.pnpm/json-schema-traverse@1.0.0/node_modules/json-schema-traverse/index.js
+// node_modules/json-schema-traverse/index.js
 var require_json_schema_traverse = __commonJS({
-  "node_modules/.pnpm/json-schema-traverse@1.0.0/node_modules/json-schema-traverse/index.js"(exports, module) {
+  "node_modules/json-schema-traverse/index.js"(exports, module) {
     "use strict";
     var traverse = module.exports = function(schema, opts, cb) {
       if (typeof opts == "function") {
@@ -2169,9 +2169,9 @@ var require_json_schema_traverse = __commonJS({
   }
 });
 
-// node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/compile/resolve.js
+// node_modules/ajv/dist/compile/resolve.js
 var require_resolve = __commonJS({
-  "node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/compile/resolve.js"(exports) {
+  "node_modules/ajv/dist/compile/resolve.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.getSchemaRefs = exports.resolveUrl = exports.normalizeId = exports._getFullPath = exports.getFullPath = exports.inlineRef = void 0;
@@ -2325,9 +2325,9 @@ var require_resolve = __commonJS({
   }
 });
 
-// node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/compile/validate/index.js
+// node_modules/ajv/dist/compile/validate/index.js
 var require_validate = __commonJS({
-  "node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/compile/validate/index.js"(exports) {
+  "node_modules/ajv/dist/compile/validate/index.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.getData = exports.KeywordCxt = exports.validateFunctionCode = void 0;
@@ -2833,9 +2833,9 @@ var require_validate = __commonJS({
   }
 });
 
-// node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/runtime/validation_error.js
+// node_modules/ajv/dist/runtime/validation_error.js
 var require_validation_error = __commonJS({
-  "node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/runtime/validation_error.js"(exports) {
+  "node_modules/ajv/dist/runtime/validation_error.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var ValidationError = class extends Error {
@@ -2849,9 +2849,9 @@ var require_validation_error = __commonJS({
   }
 });
 
-// node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/compile/ref_error.js
+// node_modules/ajv/dist/compile/ref_error.js
 var require_ref_error = __commonJS({
-  "node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/compile/ref_error.js"(exports) {
+  "node_modules/ajv/dist/compile/ref_error.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var resolve_1 = require_resolve();
@@ -2866,9 +2866,9 @@ var require_ref_error = __commonJS({
   }
 });
 
-// node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/compile/index.js
+// node_modules/ajv/dist/compile/index.js
 var require_compile = __commonJS({
-  "node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/compile/index.js"(exports) {
+  "node_modules/ajv/dist/compile/index.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.resolveSchema = exports.getCompilingSchema = exports.resolveRef = exports.compileSchema = exports.SchemaEnv = void 0;
@@ -3090,9 +3090,9 @@ var require_compile = __commonJS({
   }
 });
 
-// node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/refs/data.json
+// node_modules/ajv/dist/refs/data.json
 var require_data = __commonJS({
-  "node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/refs/data.json"(exports, module) {
+  "node_modules/ajv/dist/refs/data.json"(exports, module) {
     module.exports = {
       $id: "https://raw.githubusercontent.com/ajv-validator/ajv/master/lib/refs/data.json#",
       description: "Meta-schema for $data reference (JSON AnySchema extension proposal)",
@@ -3109,9 +3109,9 @@ var require_data = __commonJS({
   }
 });
 
-// node_modules/.pnpm/fast-uri@3.1.0/node_modules/fast-uri/lib/utils.js
+// node_modules/fast-uri/lib/utils.js
 var require_utils = __commonJS({
-  "node_modules/.pnpm/fast-uri@3.1.0/node_modules/fast-uri/lib/utils.js"(exports, module) {
+  "node_modules/fast-uri/lib/utils.js"(exports, module) {
     "use strict";
     var isUUID = RegExp.prototype.test.bind(/^[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}$/iu);
     var isIPv4 = RegExp.prototype.test.bind(/^(?:(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]\d|\d)\.){3}(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]\d|\d)$/u);
@@ -3367,9 +3367,9 @@ var require_utils = __commonJS({
   }
 });
 
-// node_modules/.pnpm/fast-uri@3.1.0/node_modules/fast-uri/lib/schemes.js
+// node_modules/fast-uri/lib/schemes.js
 var require_schemes = __commonJS({
-  "node_modules/.pnpm/fast-uri@3.1.0/node_modules/fast-uri/lib/schemes.js"(exports, module) {
+  "node_modules/fast-uri/lib/schemes.js"(exports, module) {
     "use strict";
     var { isUUID } = require_utils();
     var URN_REG = /([\da-z][\d\-a-z]{0,31}):((?:[\w!$'()*+,\-.:;=@]|%[\da-f]{2})+)/iu;
@@ -3577,9 +3577,9 @@ var require_schemes = __commonJS({
   }
 });
 
-// node_modules/.pnpm/fast-uri@3.1.0/node_modules/fast-uri/index.js
+// node_modules/fast-uri/index.js
 var require_fast_uri = __commonJS({
-  "node_modules/.pnpm/fast-uri@3.1.0/node_modules/fast-uri/index.js"(exports, module) {
+  "node_modules/fast-uri/index.js"(exports, module) {
     "use strict";
     var { normalizeIPv6, removeDotSegments, recomposeAuthority, normalizeComponentEncoding, isIPv4, nonSimpleDomain } = require_utils();
     var { SCHEMES, getSchemeHandler } = require_schemes();
@@ -3833,9 +3833,9 @@ var require_fast_uri = __commonJS({
   }
 });
 
-// node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/runtime/uri.js
+// node_modules/ajv/dist/runtime/uri.js
 var require_uri = __commonJS({
-  "node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/runtime/uri.js"(exports) {
+  "node_modules/ajv/dist/runtime/uri.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var uri = require_fast_uri();
@@ -3844,9 +3844,9 @@ var require_uri = __commonJS({
   }
 });
 
-// node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/core.js
+// node_modules/ajv/dist/core.js
 var require_core = __commonJS({
-  "node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/core.js"(exports) {
+  "node_modules/ajv/dist/core.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.CodeGen = exports.Name = exports.nil = exports.stringify = exports.str = exports._ = exports.KeywordCxt = void 0;
@@ -4455,9 +4455,9 @@ var require_core = __commonJS({
   }
 });
 
-// node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/vocabularies/core/id.js
+// node_modules/ajv/dist/vocabularies/core/id.js
 var require_id = __commonJS({
-  "node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/vocabularies/core/id.js"(exports) {
+  "node_modules/ajv/dist/vocabularies/core/id.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var def = {
@@ -4470,9 +4470,9 @@ var require_id = __commonJS({
   }
 });
 
-// node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/vocabularies/core/ref.js
+// node_modules/ajv/dist/vocabularies/core/ref.js
 var require_ref = __commonJS({
-  "node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/vocabularies/core/ref.js"(exports) {
+  "node_modules/ajv/dist/vocabularies/core/ref.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.callRef = exports.getValidate = void 0;
@@ -4592,9 +4592,9 @@ var require_ref = __commonJS({
   }
 });
 
-// node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/vocabularies/core/index.js
+// node_modules/ajv/dist/vocabularies/core/index.js
 var require_core2 = __commonJS({
-  "node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/vocabularies/core/index.js"(exports) {
+  "node_modules/ajv/dist/vocabularies/core/index.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var id_1 = require_id();
@@ -4613,9 +4613,9 @@ var require_core2 = __commonJS({
   }
 });
 
-// node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/vocabularies/validation/limitNumber.js
+// node_modules/ajv/dist/vocabularies/validation/limitNumber.js
 var require_limitNumber = __commonJS({
-  "node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/vocabularies/validation/limitNumber.js"(exports) {
+  "node_modules/ajv/dist/vocabularies/validation/limitNumber.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var codegen_1 = require_codegen();
@@ -4645,9 +4645,9 @@ var require_limitNumber = __commonJS({
   }
 });
 
-// node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/vocabularies/validation/multipleOf.js
+// node_modules/ajv/dist/vocabularies/validation/multipleOf.js
 var require_multipleOf = __commonJS({
-  "node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/vocabularies/validation/multipleOf.js"(exports) {
+  "node_modules/ajv/dist/vocabularies/validation/multipleOf.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var codegen_1 = require_codegen();
@@ -4673,9 +4673,9 @@ var require_multipleOf = __commonJS({
   }
 });
 
-// node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/runtime/ucs2length.js
+// node_modules/ajv/dist/runtime/ucs2length.js
 var require_ucs2length = __commonJS({
-  "node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/runtime/ucs2length.js"(exports) {
+  "node_modules/ajv/dist/runtime/ucs2length.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     function ucs2length(str) {
@@ -4699,9 +4699,9 @@ var require_ucs2length = __commonJS({
   }
 });
 
-// node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/vocabularies/validation/limitLength.js
+// node_modules/ajv/dist/vocabularies/validation/limitLength.js
 var require_limitLength = __commonJS({
-  "node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/vocabularies/validation/limitLength.js"(exports) {
+  "node_modules/ajv/dist/vocabularies/validation/limitLength.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var codegen_1 = require_codegen();
@@ -4731,9 +4731,9 @@ var require_limitLength = __commonJS({
   }
 });
 
-// node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/vocabularies/validation/pattern.js
+// node_modules/ajv/dist/vocabularies/validation/pattern.js
 var require_pattern = __commonJS({
-  "node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/vocabularies/validation/pattern.js"(exports) {
+  "node_modules/ajv/dist/vocabularies/validation/pattern.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var code_1 = require_code2();
@@ -4768,9 +4768,9 @@ var require_pattern = __commonJS({
   }
 });
 
-// node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/vocabularies/validation/limitProperties.js
+// node_modules/ajv/dist/vocabularies/validation/limitProperties.js
 var require_limitProperties = __commonJS({
-  "node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/vocabularies/validation/limitProperties.js"(exports) {
+  "node_modules/ajv/dist/vocabularies/validation/limitProperties.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var codegen_1 = require_codegen();
@@ -4797,9 +4797,9 @@ var require_limitProperties = __commonJS({
   }
 });
 
-// node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/vocabularies/validation/required.js
+// node_modules/ajv/dist/vocabularies/validation/required.js
 var require_required = __commonJS({
-  "node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/vocabularies/validation/required.js"(exports) {
+  "node_modules/ajv/dist/vocabularies/validation/required.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var code_1 = require_code2();
@@ -4879,9 +4879,9 @@ var require_required = __commonJS({
   }
 });
 
-// node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/vocabularies/validation/limitItems.js
+// node_modules/ajv/dist/vocabularies/validation/limitItems.js
 var require_limitItems = __commonJS({
-  "node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/vocabularies/validation/limitItems.js"(exports) {
+  "node_modules/ajv/dist/vocabularies/validation/limitItems.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var codegen_1 = require_codegen();
@@ -4908,9 +4908,9 @@ var require_limitItems = __commonJS({
   }
 });
 
-// node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/runtime/equal.js
+// node_modules/ajv/dist/runtime/equal.js
 var require_equal = __commonJS({
-  "node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/runtime/equal.js"(exports) {
+  "node_modules/ajv/dist/runtime/equal.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var equal = require_fast_deep_equal();
@@ -4919,9 +4919,9 @@ var require_equal = __commonJS({
   }
 });
 
-// node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/vocabularies/validation/uniqueItems.js
+// node_modules/ajv/dist/vocabularies/validation/uniqueItems.js
 var require_uniqueItems = __commonJS({
-  "node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/vocabularies/validation/uniqueItems.js"(exports) {
+  "node_modules/ajv/dist/vocabularies/validation/uniqueItems.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var dataType_1 = require_dataType();
@@ -4986,9 +4986,9 @@ var require_uniqueItems = __commonJS({
   }
 });
 
-// node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/vocabularies/validation/const.js
+// node_modules/ajv/dist/vocabularies/validation/const.js
 var require_const = __commonJS({
-  "node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/vocabularies/validation/const.js"(exports) {
+  "node_modules/ajv/dist/vocabularies/validation/const.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var codegen_1 = require_codegen();
@@ -5015,9 +5015,9 @@ var require_const = __commonJS({
   }
 });
 
-// node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/vocabularies/validation/enum.js
+// node_modules/ajv/dist/vocabularies/validation/enum.js
 var require_enum = __commonJS({
-  "node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/vocabularies/validation/enum.js"(exports) {
+  "node_modules/ajv/dist/vocabularies/validation/enum.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var codegen_1 = require_codegen();
@@ -5064,9 +5064,9 @@ var require_enum = __commonJS({
   }
 });
 
-// node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/vocabularies/validation/index.js
+// node_modules/ajv/dist/vocabularies/validation/index.js
 var require_validation = __commonJS({
-  "node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/vocabularies/validation/index.js"(exports) {
+  "node_modules/ajv/dist/vocabularies/validation/index.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var limitNumber_1 = require_limitNumber();
@@ -5102,9 +5102,9 @@ var require_validation = __commonJS({
   }
 });
 
-// node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/vocabularies/applicator/additionalItems.js
+// node_modules/ajv/dist/vocabularies/applicator/additionalItems.js
 var require_additionalItems = __commonJS({
-  "node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/vocabularies/applicator/additionalItems.js"(exports) {
+  "node_modules/ajv/dist/vocabularies/applicator/additionalItems.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.validateAdditionalItems = void 0;
@@ -5155,9 +5155,9 @@ var require_additionalItems = __commonJS({
   }
 });
 
-// node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/vocabularies/applicator/items.js
+// node_modules/ajv/dist/vocabularies/applicator/items.js
 var require_items = __commonJS({
-  "node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/vocabularies/applicator/items.js"(exports) {
+  "node_modules/ajv/dist/vocabularies/applicator/items.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.validateTuple = void 0;
@@ -5212,9 +5212,9 @@ var require_items = __commonJS({
   }
 });
 
-// node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/vocabularies/applicator/prefixItems.js
+// node_modules/ajv/dist/vocabularies/applicator/prefixItems.js
 var require_prefixItems = __commonJS({
-  "node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/vocabularies/applicator/prefixItems.js"(exports) {
+  "node_modules/ajv/dist/vocabularies/applicator/prefixItems.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var items_1 = require_items();
@@ -5229,9 +5229,9 @@ var require_prefixItems = __commonJS({
   }
 });
 
-// node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/vocabularies/applicator/items2020.js
+// node_modules/ajv/dist/vocabularies/applicator/items2020.js
 var require_items2020 = __commonJS({
-  "node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/vocabularies/applicator/items2020.js"(exports) {
+  "node_modules/ajv/dist/vocabularies/applicator/items2020.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var codegen_1 = require_codegen();
@@ -5264,9 +5264,9 @@ var require_items2020 = __commonJS({
   }
 });
 
-// node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/vocabularies/applicator/contains.js
+// node_modules/ajv/dist/vocabularies/applicator/contains.js
 var require_contains = __commonJS({
-  "node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/vocabularies/applicator/contains.js"(exports) {
+  "node_modules/ajv/dist/vocabularies/applicator/contains.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var codegen_1 = require_codegen();
@@ -5358,9 +5358,9 @@ var require_contains = __commonJS({
   }
 });
 
-// node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/vocabularies/applicator/dependencies.js
+// node_modules/ajv/dist/vocabularies/applicator/dependencies.js
 var require_dependencies = __commonJS({
-  "node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/vocabularies/applicator/dependencies.js"(exports) {
+  "node_modules/ajv/dist/vocabularies/applicator/dependencies.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.validateSchemaDeps = exports.validatePropertyDeps = exports.error = void 0;
@@ -5452,9 +5452,9 @@ var require_dependencies = __commonJS({
   }
 });
 
-// node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/vocabularies/applicator/propertyNames.js
+// node_modules/ajv/dist/vocabularies/applicator/propertyNames.js
 var require_propertyNames = __commonJS({
-  "node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/vocabularies/applicator/propertyNames.js"(exports) {
+  "node_modules/ajv/dist/vocabularies/applicator/propertyNames.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var codegen_1 = require_codegen();
@@ -5495,9 +5495,9 @@ var require_propertyNames = __commonJS({
   }
 });
 
-// node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/vocabularies/applicator/additionalProperties.js
+// node_modules/ajv/dist/vocabularies/applicator/additionalProperties.js
 var require_additionalProperties = __commonJS({
-  "node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/vocabularies/applicator/additionalProperties.js"(exports) {
+  "node_modules/ajv/dist/vocabularies/applicator/additionalProperties.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var code_1 = require_code2();
@@ -5601,9 +5601,9 @@ var require_additionalProperties = __commonJS({
   }
 });
 
-// node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/vocabularies/applicator/properties.js
+// node_modules/ajv/dist/vocabularies/applicator/properties.js
 var require_properties = __commonJS({
-  "node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/vocabularies/applicator/properties.js"(exports) {
+  "node_modules/ajv/dist/vocabularies/applicator/properties.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var validate_1 = require_validate();
@@ -5659,9 +5659,9 @@ var require_properties = __commonJS({
   }
 });
 
-// node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/vocabularies/applicator/patternProperties.js
+// node_modules/ajv/dist/vocabularies/applicator/patternProperties.js
 var require_patternProperties = __commonJS({
-  "node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/vocabularies/applicator/patternProperties.js"(exports) {
+  "node_modules/ajv/dist/vocabularies/applicator/patternProperties.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var code_1 = require_code2();
@@ -5733,9 +5733,9 @@ var require_patternProperties = __commonJS({
   }
 });
 
-// node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/vocabularies/applicator/not.js
+// node_modules/ajv/dist/vocabularies/applicator/not.js
 var require_not = __commonJS({
-  "node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/vocabularies/applicator/not.js"(exports) {
+  "node_modules/ajv/dist/vocabularies/applicator/not.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var util_1 = require_util();
@@ -5764,9 +5764,9 @@ var require_not = __commonJS({
   }
 });
 
-// node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/vocabularies/applicator/anyOf.js
+// node_modules/ajv/dist/vocabularies/applicator/anyOf.js
 var require_anyOf = __commonJS({
-  "node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/vocabularies/applicator/anyOf.js"(exports) {
+  "node_modules/ajv/dist/vocabularies/applicator/anyOf.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var code_1 = require_code2();
@@ -5781,9 +5781,9 @@ var require_anyOf = __commonJS({
   }
 });
 
-// node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/vocabularies/applicator/oneOf.js
+// node_modules/ajv/dist/vocabularies/applicator/oneOf.js
 var require_oneOf = __commonJS({
-  "node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/vocabularies/applicator/oneOf.js"(exports) {
+  "node_modules/ajv/dist/vocabularies/applicator/oneOf.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var codegen_1 = require_codegen();
@@ -5839,9 +5839,9 @@ var require_oneOf = __commonJS({
   }
 });
 
-// node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/vocabularies/applicator/allOf.js
+// node_modules/ajv/dist/vocabularies/applicator/allOf.js
 var require_allOf = __commonJS({
-  "node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/vocabularies/applicator/allOf.js"(exports) {
+  "node_modules/ajv/dist/vocabularies/applicator/allOf.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var util_1 = require_util();
@@ -5866,9 +5866,9 @@ var require_allOf = __commonJS({
   }
 });
 
-// node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/vocabularies/applicator/if.js
+// node_modules/ajv/dist/vocabularies/applicator/if.js
 var require_if = __commonJS({
-  "node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/vocabularies/applicator/if.js"(exports) {
+  "node_modules/ajv/dist/vocabularies/applicator/if.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var codegen_1 = require_codegen();
@@ -5935,9 +5935,9 @@ var require_if = __commonJS({
   }
 });
 
-// node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/vocabularies/applicator/thenElse.js
+// node_modules/ajv/dist/vocabularies/applicator/thenElse.js
 var require_thenElse = __commonJS({
-  "node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/vocabularies/applicator/thenElse.js"(exports) {
+  "node_modules/ajv/dist/vocabularies/applicator/thenElse.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var util_1 = require_util();
@@ -5953,9 +5953,9 @@ var require_thenElse = __commonJS({
   }
 });
 
-// node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/vocabularies/applicator/index.js
+// node_modules/ajv/dist/vocabularies/applicator/index.js
 var require_applicator = __commonJS({
-  "node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/vocabularies/applicator/index.js"(exports) {
+  "node_modules/ajv/dist/vocabularies/applicator/index.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var additionalItems_1 = require_additionalItems();
@@ -6001,9 +6001,9 @@ var require_applicator = __commonJS({
   }
 });
 
-// node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/vocabularies/format/format.js
+// node_modules/ajv/dist/vocabularies/format/format.js
 var require_format = __commonJS({
-  "node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/vocabularies/format/format.js"(exports) {
+  "node_modules/ajv/dist/vocabularies/format/format.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var codegen_1 = require_codegen();
@@ -6091,9 +6091,9 @@ var require_format = __commonJS({
   }
 });
 
-// node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/vocabularies/format/index.js
+// node_modules/ajv/dist/vocabularies/format/index.js
 var require_format2 = __commonJS({
-  "node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/vocabularies/format/index.js"(exports) {
+  "node_modules/ajv/dist/vocabularies/format/index.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var format_1 = require_format();
@@ -6102,9 +6102,9 @@ var require_format2 = __commonJS({
   }
 });
 
-// node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/vocabularies/metadata.js
+// node_modules/ajv/dist/vocabularies/metadata.js
 var require_metadata = __commonJS({
-  "node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/vocabularies/metadata.js"(exports) {
+  "node_modules/ajv/dist/vocabularies/metadata.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.contentVocabulary = exports.metadataVocabulary = void 0;
@@ -6125,9 +6125,9 @@ var require_metadata = __commonJS({
   }
 });
 
-// node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/vocabularies/draft7.js
+// node_modules/ajv/dist/vocabularies/draft7.js
 var require_draft7 = __commonJS({
-  "node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/vocabularies/draft7.js"(exports) {
+  "node_modules/ajv/dist/vocabularies/draft7.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var core_1 = require_core2();
@@ -6147,9 +6147,9 @@ var require_draft7 = __commonJS({
   }
 });
 
-// node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/vocabularies/discriminator/types.js
+// node_modules/ajv/dist/vocabularies/discriminator/types.js
 var require_types = __commonJS({
-  "node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/vocabularies/discriminator/types.js"(exports) {
+  "node_modules/ajv/dist/vocabularies/discriminator/types.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.DiscrError = void 0;
@@ -6161,9 +6161,9 @@ var require_types = __commonJS({
   }
 });
 
-// node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/vocabularies/discriminator/index.js
+// node_modules/ajv/dist/vocabularies/discriminator/index.js
 var require_discriminator = __commonJS({
-  "node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/vocabularies/discriminator/index.js"(exports) {
+  "node_modules/ajv/dist/vocabularies/discriminator/index.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var codegen_1 = require_codegen();
@@ -6266,9 +6266,9 @@ var require_discriminator = __commonJS({
   }
 });
 
-// node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/refs/json-schema-draft-07.json
+// node_modules/ajv/dist/refs/json-schema-draft-07.json
 var require_json_schema_draft_07 = __commonJS({
-  "node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/refs/json-schema-draft-07.json"(exports, module) {
+  "node_modules/ajv/dist/refs/json-schema-draft-07.json"(exports, module) {
     module.exports = {
       $schema: "http://json-schema.org/draft-07/schema#",
       $id: "http://json-schema.org/draft-07/schema#",
@@ -6423,9 +6423,9 @@ var require_json_schema_draft_07 = __commonJS({
   }
 });
 
-// node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/ajv.js
+// node_modules/ajv/dist/ajv.js
 var require_ajv = __commonJS({
-  "node_modules/.pnpm/ajv@8.18.0/node_modules/ajv/dist/ajv.js"(exports, module) {
+  "node_modules/ajv/dist/ajv.js"(exports, module) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.MissingRefError = exports.ValidationError = exports.CodeGen = exports.Name = exports.nil = exports.stringify = exports.str = exports._ = exports.KeywordCxt = exports.Ajv = void 0;
@@ -6493,9 +6493,9 @@ var require_ajv = __commonJS({
   }
 });
 
-// node_modules/.pnpm/ajv-formats@3.0.1_ajv@8.18.0/node_modules/ajv-formats/dist/formats.js
+// node_modules/ajv-formats/dist/formats.js
 var require_formats = __commonJS({
-  "node_modules/.pnpm/ajv-formats@3.0.1_ajv@8.18.0/node_modules/ajv-formats/dist/formats.js"(exports) {
+  "node_modules/ajv-formats/dist/formats.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.formatNames = exports.fastFormats = exports.fullFormats = void 0;
@@ -6696,9 +6696,9 @@ var require_formats = __commonJS({
   }
 });
 
-// node_modules/.pnpm/ajv-formats@3.0.1_ajv@8.18.0/node_modules/ajv-formats/dist/limit.js
+// node_modules/ajv-formats/dist/limit.js
 var require_limit = __commonJS({
-  "node_modules/.pnpm/ajv-formats@3.0.1_ajv@8.18.0/node_modules/ajv-formats/dist/limit.js"(exports) {
+  "node_modules/ajv-formats/dist/limit.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.formatLimitDefinition = void 0;
@@ -6768,9 +6768,9 @@ var require_limit = __commonJS({
   }
 });
 
-// node_modules/.pnpm/ajv-formats@3.0.1_ajv@8.18.0/node_modules/ajv-formats/dist/index.js
+// node_modules/ajv-formats/dist/index.js
 var require_dist = __commonJS({
-  "node_modules/.pnpm/ajv-formats@3.0.1_ajv@8.18.0/node_modules/ajv-formats/dist/index.js"(exports, module) {
+  "node_modules/ajv-formats/dist/index.js"(exports, module) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var formats_1 = require_formats();
@@ -6810,7 +6810,7 @@ var require_dist = __commonJS({
   }
 });
 
-// node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/external.js
+// node_modules/zod/v3/external.js
 var external_exports = {};
 __export(external_exports, {
   BRAND: () => BRAND,
@@ -6922,7 +6922,7 @@ __export(external_exports, {
   void: () => voidType
 });
 
-// node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/helpers/util.js
+// node_modules/zod/v3/helpers/util.js
 var util;
 (function(util2) {
   util2.assertEqual = (_) => {
@@ -7056,7 +7056,7 @@ var getParsedType = (data) => {
   }
 };
 
-// node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/ZodError.js
+// node_modules/zod/v3/ZodError.js
 var ZodIssueCode = util.arrayToEnum([
   "invalid_type",
   "invalid_literal",
@@ -7174,7 +7174,7 @@ ZodError.create = (issues) => {
   return error2;
 };
 
-// node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/locales/en.js
+// node_modules/zod/v3/locales/en.js
 var errorMap = (issue2, _ctx) => {
   let message;
   switch (issue2.code) {
@@ -7277,7 +7277,7 @@ var errorMap = (issue2, _ctx) => {
 };
 var en_default = errorMap;
 
-// node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/errors.js
+// node_modules/zod/v3/errors.js
 var overrideErrorMap = en_default;
 function setErrorMap(map) {
   overrideErrorMap = map;
@@ -7286,7 +7286,7 @@ function getErrorMap() {
   return overrideErrorMap;
 }
 
-// node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/helpers/parseUtil.js
+// node_modules/zod/v3/helpers/parseUtil.js
 var makeIssue = (params) => {
   const { data, path: path4, errorMaps, issueData } = params;
   const fullPath = [...path4, ...issueData.path || []];
@@ -7396,14 +7396,14 @@ var isDirty = (x) => x.status === "dirty";
 var isValid = (x) => x.status === "valid";
 var isAsync = (x) => typeof Promise !== "undefined" && x instanceof Promise;
 
-// node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/helpers/errorUtil.js
+// node_modules/zod/v3/helpers/errorUtil.js
 var errorUtil;
 (function(errorUtil2) {
   errorUtil2.errToObj = (message) => typeof message === "string" ? { message } : message || {};
   errorUtil2.toString = (message) => typeof message === "string" ? message : message?.message;
 })(errorUtil || (errorUtil = {}));
 
-// node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.js
+// node_modules/zod/v3/types.js
 var ParseInputLazyPath = class {
   constructor(parent, value, path4, key) {
     this._cachedPath = [];
@@ -10851,7 +10851,7 @@ var coerce = {
 };
 var NEVER = INVALID;
 
-// node_modules/.pnpm/zod@3.25.76/node_modules/zod/v4/core/core.js
+// node_modules/zod/v4/core/core.js
 var NEVER2 = Object.freeze({
   status: "aborted"
 });
@@ -10911,7 +10911,7 @@ function config(newConfig) {
   return globalConfig;
 }
 
-// node_modules/.pnpm/zod@3.25.76/node_modules/zod/v4/core/util.js
+// node_modules/zod/v4/core/util.js
 var util_exports = {};
 __export(util_exports, {
   BIGINT_FORMAT_RANGES: () => BIGINT_FORMAT_RANGES,
@@ -11432,7 +11432,7 @@ var Class = class {
   }
 };
 
-// node_modules/.pnpm/zod@3.25.76/node_modules/zod/v4/core/errors.js
+// node_modules/zod/v4/core/errors.js
 var initializer = (inst, def) => {
   inst.name = "$ZodError";
   Object.defineProperty(inst, "_zod", {
@@ -11507,7 +11507,7 @@ function formatError(error2, _mapper) {
   return fieldErrors;
 }
 
-// node_modules/.pnpm/zod@3.25.76/node_modules/zod/v4/core/parse.js
+// node_modules/zod/v4/core/parse.js
 var _parse = (_Err) => (schema, value, _ctx, _params) => {
   const ctx = _ctx ? Object.assign(_ctx, { async: false }) : { async: false };
   const result = schema._zod.run({ value, issues: [] }, ctx);
@@ -11559,7 +11559,7 @@ var _safeParseAsync = (_Err) => async (schema, value, _ctx) => {
 };
 var safeParseAsync = /* @__PURE__ */ _safeParseAsync($ZodRealError);
 
-// node_modules/.pnpm/zod@3.25.76/node_modules/zod/v4/core/regexes.js
+// node_modules/zod/v4/core/regexes.js
 var cuid = /^[cC][^\s-]{8,}$/;
 var cuid2 = /^[0-9a-z]+$/;
 var ulid = /^[0-9A-HJKMNP-TV-Za-hjkmnp-tv-z]{26}$/;
@@ -11617,7 +11617,7 @@ var _null = /null/i;
 var lowercase = /^[^A-Z]*$/;
 var uppercase = /^[^a-z]*$/;
 
-// node_modules/.pnpm/zod@3.25.76/node_modules/zod/v4/core/checks.js
+// node_modules/zod/v4/core/checks.js
 var $ZodCheck = /* @__PURE__ */ $constructor("$ZodCheck", (inst, def) => {
   var _a;
   inst._zod ?? (inst._zod = {});
@@ -12002,7 +12002,7 @@ var $ZodCheckOverwrite = /* @__PURE__ */ $constructor("$ZodCheckOverwrite", (ins
   };
 });
 
-// node_modules/.pnpm/zod@3.25.76/node_modules/zod/v4/core/doc.js
+// node_modules/zod/v4/core/doc.js
 var Doc = class {
   constructor(args = []) {
     this.content = [];
@@ -12038,14 +12038,14 @@ var Doc = class {
   }
 };
 
-// node_modules/.pnpm/zod@3.25.76/node_modules/zod/v4/core/versions.js
+// node_modules/zod/v4/core/versions.js
 var version = {
   major: 4,
   minor: 0,
   patch: 0
 };
 
-// node_modules/.pnpm/zod@3.25.76/node_modules/zod/v4/core/schemas.js
+// node_modules/zod/v4/core/schemas.js
 var $ZodType = /* @__PURE__ */ $constructor("$ZodType", (inst, def) => {
   var _a;
   inst ?? (inst = {});
@@ -13283,7 +13283,7 @@ function handleRefineResult(result, payload, input, inst) {
   }
 }
 
-// node_modules/.pnpm/zod@3.25.76/node_modules/zod/v4/locales/en.js
+// node_modules/zod/v4/locales/en.js
 var parsedType = (data) => {
   const t = typeof data;
   switch (t) {
@@ -13401,7 +13401,7 @@ function en_default2() {
   };
 }
 
-// node_modules/.pnpm/zod@3.25.76/node_modules/zod/v4/core/registries.js
+// node_modules/zod/v4/core/registries.js
 var $output = Symbol("ZodOutput");
 var $input = Symbol("ZodInput");
 var $ZodRegistry = class {
@@ -13451,7 +13451,7 @@ function registry() {
 }
 var globalRegistry = /* @__PURE__ */ registry();
 
-// node_modules/.pnpm/zod@3.25.76/node_modules/zod/v4/core/api.js
+// node_modules/zod/v4/core/api.js
 function _string(Class2, params) {
   return new Class2({
     type: "string",
@@ -13890,7 +13890,7 @@ function _refine(Class2, fn, _params) {
   return schema;
 }
 
-// node_modules/.pnpm/zod@3.25.76/node_modules/zod/v4/core/to-json-schema.js
+// node_modules/zod/v4/core/to-json-schema.js
 var JSONSchemaGenerator = class {
   constructor(params) {
     this.counter = 0;
@@ -14655,7 +14655,7 @@ function isTransforming(_schema, _ctx) {
   throw new Error(`Unknown schema type: ${def.type}`);
 }
 
-// node_modules/.pnpm/zod@3.25.76/node_modules/zod/v4/mini/schemas.js
+// node_modules/zod/v4/mini/schemas.js
 var ZodMiniType = /* @__PURE__ */ $constructor("ZodMiniType", (inst, def) => {
   if (!inst._zod)
     throw new Error("Uninitialized schema in ZodMiniType.");
@@ -14701,7 +14701,7 @@ function object(shape, params) {
   return new ZodMiniObject(def);
 }
 
-// node_modules/.pnpm/@modelcontextprotocol+sdk@1.27.0_zod@3.25.76/node_modules/@modelcontextprotocol/sdk/dist/esm/server/zod-compat.js
+// node_modules/@modelcontextprotocol/sdk/dist/esm/server/zod-compat.js
 function isZ4Schema(s) {
   const schema = s;
   return !!schema._zod;
@@ -14845,7 +14845,7 @@ function getLiteralValue(schema) {
   return void 0;
 }
 
-// node_modules/.pnpm/zod@3.25.76/node_modules/zod/v4/classic/iso.js
+// node_modules/zod/v4/classic/iso.js
 var iso_exports2 = {};
 __export(iso_exports2, {
   ZodISODate: () => ZodISODate,
@@ -14886,7 +14886,7 @@ function duration2(params) {
   return _isoDuration(ZodISODuration, params);
 }
 
-// node_modules/.pnpm/zod@3.25.76/node_modules/zod/v4/classic/errors.js
+// node_modules/zod/v4/classic/errors.js
 var initializer2 = (inst, issues) => {
   $ZodError.init(inst, issues);
   inst.name = "ZodError";
@@ -14920,13 +14920,13 @@ var ZodRealError = $constructor("ZodError", initializer2, {
   Parent: Error
 });
 
-// node_modules/.pnpm/zod@3.25.76/node_modules/zod/v4/classic/parse.js
+// node_modules/zod/v4/classic/parse.js
 var parse2 = /* @__PURE__ */ _parse(ZodRealError);
 var parseAsync2 = /* @__PURE__ */ _parseAsync(ZodRealError);
 var safeParse3 = /* @__PURE__ */ _safeParse(ZodRealError);
 var safeParseAsync3 = /* @__PURE__ */ _safeParseAsync(ZodRealError);
 
-// node_modules/.pnpm/zod@3.25.76/node_modules/zod/v4/classic/schemas.js
+// node_modules/zod/v4/classic/schemas.js
 var ZodType2 = /* @__PURE__ */ $constructor("ZodType", (inst, def) => {
   $ZodType.init(inst, def);
   inst.def = def;
@@ -15537,10 +15537,10 @@ function preprocess(fn, schema) {
   return pipe(transform(fn), schema);
 }
 
-// node_modules/.pnpm/zod@3.25.76/node_modules/zod/v4/classic/external.js
+// node_modules/zod/v4/classic/external.js
 config(en_default2());
 
-// node_modules/.pnpm/@modelcontextprotocol+sdk@1.27.0_zod@3.25.76/node_modules/@modelcontextprotocol/sdk/dist/esm/types.js
+// node_modules/@modelcontextprotocol/sdk/dist/esm/types.js
 var LATEST_PROTOCOL_VERSION = "2025-11-25";
 var SUPPORTED_PROTOCOL_VERSIONS = [LATEST_PROTOCOL_VERSION, "2025-06-18", "2025-03-26", "2024-11-05", "2024-10-07"];
 var RELATED_TASK_META_KEY = "io.modelcontextprotocol/related-task";
@@ -17056,12 +17056,12 @@ var UrlElicitationRequiredError = class extends McpError {
   }
 };
 
-// node_modules/.pnpm/@modelcontextprotocol+sdk@1.27.0_zod@3.25.76/node_modules/@modelcontextprotocol/sdk/dist/esm/experimental/tasks/interfaces.js
+// node_modules/@modelcontextprotocol/sdk/dist/esm/experimental/tasks/interfaces.js
 function isTerminal(status) {
   return status === "completed" || status === "failed" || status === "cancelled";
 }
 
-// node_modules/.pnpm/zod-to-json-schema@3.25.1_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/Options.js
+// node_modules/zod-to-json-schema/dist/esm/Options.js
 var ignoreOverride = Symbol("Let zodToJsonSchema decide on which parser to use");
 var defaultOptions = {
   name: void 0,
@@ -17095,7 +17095,7 @@ var getDefaultOptions = (options) => typeof options === "string" ? {
   ...options
 };
 
-// node_modules/.pnpm/zod-to-json-schema@3.25.1_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/Refs.js
+// node_modules/zod-to-json-schema/dist/esm/Refs.js
 var getRefs = (options) => {
   const _options = getDefaultOptions(options);
   const currentPath = _options.name !== void 0 ? [..._options.basePath, _options.definitionPath, _options.name] : _options.basePath;
@@ -17116,7 +17116,7 @@ var getRefs = (options) => {
   };
 };
 
-// node_modules/.pnpm/zod-to-json-schema@3.25.1_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/errorMessages.js
+// node_modules/zod-to-json-schema/dist/esm/errorMessages.js
 function addErrorMessage(res, key, errorMessage, refs) {
   if (!refs?.errorMessages)
     return;
@@ -17132,7 +17132,7 @@ function setResponseValueAndErrors(res, key, value, errorMessage, refs) {
   addErrorMessage(res, key, errorMessage, refs);
 }
 
-// node_modules/.pnpm/zod-to-json-schema@3.25.1_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/getRelativePath.js
+// node_modules/zod-to-json-schema/dist/esm/getRelativePath.js
 var getRelativePath = (pathA, pathB) => {
   let i = 0;
   for (; i < pathA.length && i < pathB.length; i++) {
@@ -17142,7 +17142,7 @@ var getRelativePath = (pathA, pathB) => {
   return [(pathA.length - i).toString(), ...pathB.slice(i)].join("/");
 };
 
-// node_modules/.pnpm/zod-to-json-schema@3.25.1_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/any.js
+// node_modules/zod-to-json-schema/dist/esm/parsers/any.js
 function parseAnyDef(refs) {
   if (refs.target !== "openAi") {
     return {};
@@ -17158,7 +17158,7 @@ function parseAnyDef(refs) {
   };
 }
 
-// node_modules/.pnpm/zod-to-json-schema@3.25.1_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/array.js
+// node_modules/zod-to-json-schema/dist/esm/parsers/array.js
 function parseArrayDef(def, refs) {
   const res = {
     type: "array"
@@ -17182,7 +17182,7 @@ function parseArrayDef(def, refs) {
   return res;
 }
 
-// node_modules/.pnpm/zod-to-json-schema@3.25.1_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/bigint.js
+// node_modules/zod-to-json-schema/dist/esm/parsers/bigint.js
 function parseBigintDef(def, refs) {
   const res = {
     type: "integer",
@@ -17228,24 +17228,24 @@ function parseBigintDef(def, refs) {
   return res;
 }
 
-// node_modules/.pnpm/zod-to-json-schema@3.25.1_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/boolean.js
+// node_modules/zod-to-json-schema/dist/esm/parsers/boolean.js
 function parseBooleanDef() {
   return {
     type: "boolean"
   };
 }
 
-// node_modules/.pnpm/zod-to-json-schema@3.25.1_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/branded.js
+// node_modules/zod-to-json-schema/dist/esm/parsers/branded.js
 function parseBrandedDef(_def, refs) {
   return parseDef(_def.type._def, refs);
 }
 
-// node_modules/.pnpm/zod-to-json-schema@3.25.1_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/catch.js
+// node_modules/zod-to-json-schema/dist/esm/parsers/catch.js
 var parseCatchDef = (def, refs) => {
   return parseDef(def.innerType._def, refs);
 };
 
-// node_modules/.pnpm/zod-to-json-schema@3.25.1_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/date.js
+// node_modules/zod-to-json-schema/dist/esm/parsers/date.js
 function parseDateDef(def, refs, overrideDateStrategy) {
   const strategy = overrideDateStrategy ?? refs.dateStrategy;
   if (Array.isArray(strategy)) {
@@ -17304,7 +17304,7 @@ var integerDateParser = (def, refs) => {
   return res;
 };
 
-// node_modules/.pnpm/zod-to-json-schema@3.25.1_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/default.js
+// node_modules/zod-to-json-schema/dist/esm/parsers/default.js
 function parseDefaultDef(_def, refs) {
   return {
     ...parseDef(_def.innerType._def, refs),
@@ -17312,12 +17312,12 @@ function parseDefaultDef(_def, refs) {
   };
 }
 
-// node_modules/.pnpm/zod-to-json-schema@3.25.1_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/effects.js
+// node_modules/zod-to-json-schema/dist/esm/parsers/effects.js
 function parseEffectsDef(_def, refs) {
   return refs.effectStrategy === "input" ? parseDef(_def.schema._def, refs) : parseAnyDef(refs);
 }
 
-// node_modules/.pnpm/zod-to-json-schema@3.25.1_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/enum.js
+// node_modules/zod-to-json-schema/dist/esm/parsers/enum.js
 function parseEnumDef(def) {
   return {
     type: "string",
@@ -17325,7 +17325,7 @@ function parseEnumDef(def) {
   };
 }
 
-// node_modules/.pnpm/zod-to-json-schema@3.25.1_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/intersection.js
+// node_modules/zod-to-json-schema/dist/esm/parsers/intersection.js
 var isJsonSchema7AllOfType = (type) => {
   if ("type" in type && type.type === "string")
     return false;
@@ -17367,7 +17367,7 @@ function parseIntersectionDef(def, refs) {
   } : void 0;
 }
 
-// node_modules/.pnpm/zod-to-json-schema@3.25.1_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/literal.js
+// node_modules/zod-to-json-schema/dist/esm/parsers/literal.js
 function parseLiteralDef(def, refs) {
   const parsedType2 = typeof def.value;
   if (parsedType2 !== "bigint" && parsedType2 !== "number" && parsedType2 !== "boolean" && parsedType2 !== "string") {
@@ -17387,7 +17387,7 @@ function parseLiteralDef(def, refs) {
   };
 }
 
-// node_modules/.pnpm/zod-to-json-schema@3.25.1_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/string.js
+// node_modules/zod-to-json-schema/dist/esm/parsers/string.js
 var emojiRegex2 = void 0;
 var zodPatterns = {
   /**
@@ -17712,7 +17712,7 @@ function stringifyRegExpWithFlags(regex, refs) {
   return pattern;
 }
 
-// node_modules/.pnpm/zod-to-json-schema@3.25.1_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/record.js
+// node_modules/zod-to-json-schema/dist/esm/parsers/record.js
 function parseRecordDef(def, refs) {
   if (refs.target === "openAi") {
     console.warn("Warning: OpenAI may not support records in schemas! Try an array of key-value pairs instead.");
@@ -17764,7 +17764,7 @@ function parseRecordDef(def, refs) {
   return schema;
 }
 
-// node_modules/.pnpm/zod-to-json-schema@3.25.1_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/map.js
+// node_modules/zod-to-json-schema/dist/esm/parsers/map.js
 function parseMapDef(def, refs) {
   if (refs.mapStrategy === "record") {
     return parseRecordDef(def, refs);
@@ -17789,7 +17789,7 @@ function parseMapDef(def, refs) {
   };
 }
 
-// node_modules/.pnpm/zod-to-json-schema@3.25.1_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/nativeEnum.js
+// node_modules/zod-to-json-schema/dist/esm/parsers/nativeEnum.js
 function parseNativeEnumDef(def) {
   const object3 = def.values;
   const actualKeys = Object.keys(def.values).filter((key) => {
@@ -17803,7 +17803,7 @@ function parseNativeEnumDef(def) {
   };
 }
 
-// node_modules/.pnpm/zod-to-json-schema@3.25.1_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/never.js
+// node_modules/zod-to-json-schema/dist/esm/parsers/never.js
 function parseNeverDef(refs) {
   return refs.target === "openAi" ? void 0 : {
     not: parseAnyDef({
@@ -17813,7 +17813,7 @@ function parseNeverDef(refs) {
   };
 }
 
-// node_modules/.pnpm/zod-to-json-schema@3.25.1_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/null.js
+// node_modules/zod-to-json-schema/dist/esm/parsers/null.js
 function parseNullDef(refs) {
   return refs.target === "openApi3" ? {
     enum: ["null"],
@@ -17823,7 +17823,7 @@ function parseNullDef(refs) {
   };
 }
 
-// node_modules/.pnpm/zod-to-json-schema@3.25.1_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/union.js
+// node_modules/zod-to-json-schema/dist/esm/parsers/union.js
 var primitiveMappings = {
   ZodString: "string",
   ZodNumber: "number",
@@ -17891,7 +17891,7 @@ var asAnyOf = (def, refs) => {
   return anyOf.length ? { anyOf } : void 0;
 };
 
-// node_modules/.pnpm/zod-to-json-schema@3.25.1_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/nullable.js
+// node_modules/zod-to-json-schema/dist/esm/parsers/nullable.js
 function parseNullableDef(def, refs) {
   if (["ZodString", "ZodNumber", "ZodBigInt", "ZodBoolean", "ZodNull"].includes(def.innerType._def.typeName) && (!def.innerType._def.checks || !def.innerType._def.checks.length)) {
     if (refs.target === "openApi3") {
@@ -17923,7 +17923,7 @@ function parseNullableDef(def, refs) {
   return base && { anyOf: [base, { type: "null" }] };
 }
 
-// node_modules/.pnpm/zod-to-json-schema@3.25.1_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/number.js
+// node_modules/zod-to-json-schema/dist/esm/parsers/number.js
 function parseNumberDef(def, refs) {
   const res = {
     type: "number"
@@ -17972,7 +17972,7 @@ function parseNumberDef(def, refs) {
   return res;
 }
 
-// node_modules/.pnpm/zod-to-json-schema@3.25.1_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/object.js
+// node_modules/zod-to-json-schema/dist/esm/parsers/object.js
 function parseObjectDef(def, refs) {
   const forceOptionalIntoNullable = refs.target === "openAi";
   const result = {
@@ -18042,7 +18042,7 @@ function safeIsOptional(schema) {
   }
 }
 
-// node_modules/.pnpm/zod-to-json-schema@3.25.1_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/optional.js
+// node_modules/zod-to-json-schema/dist/esm/parsers/optional.js
 var parseOptionalDef = (def, refs) => {
   if (refs.currentPath.toString() === refs.propertyPath?.toString()) {
     return parseDef(def.innerType._def, refs);
@@ -18061,7 +18061,7 @@ var parseOptionalDef = (def, refs) => {
   } : parseAnyDef(refs);
 };
 
-// node_modules/.pnpm/zod-to-json-schema@3.25.1_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/pipeline.js
+// node_modules/zod-to-json-schema/dist/esm/parsers/pipeline.js
 var parsePipelineDef = (def, refs) => {
   if (refs.pipeStrategy === "input") {
     return parseDef(def.in._def, refs);
@@ -18081,12 +18081,12 @@ var parsePipelineDef = (def, refs) => {
   };
 };
 
-// node_modules/.pnpm/zod-to-json-schema@3.25.1_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/promise.js
+// node_modules/zod-to-json-schema/dist/esm/parsers/promise.js
 function parsePromiseDef(def, refs) {
   return parseDef(def.type._def, refs);
 }
 
-// node_modules/.pnpm/zod-to-json-schema@3.25.1_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/set.js
+// node_modules/zod-to-json-schema/dist/esm/parsers/set.js
 function parseSetDef(def, refs) {
   const items = parseDef(def.valueType._def, {
     ...refs,
@@ -18106,7 +18106,7 @@ function parseSetDef(def, refs) {
   return schema;
 }
 
-// node_modules/.pnpm/zod-to-json-schema@3.25.1_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/tuple.js
+// node_modules/zod-to-json-schema/dist/esm/parsers/tuple.js
 function parseTupleDef(def, refs) {
   if (def.rest) {
     return {
@@ -18134,24 +18134,24 @@ function parseTupleDef(def, refs) {
   }
 }
 
-// node_modules/.pnpm/zod-to-json-schema@3.25.1_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/undefined.js
+// node_modules/zod-to-json-schema/dist/esm/parsers/undefined.js
 function parseUndefinedDef(refs) {
   return {
     not: parseAnyDef(refs)
   };
 }
 
-// node_modules/.pnpm/zod-to-json-schema@3.25.1_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/unknown.js
+// node_modules/zod-to-json-schema/dist/esm/parsers/unknown.js
 function parseUnknownDef(refs) {
   return parseAnyDef(refs);
 }
 
-// node_modules/.pnpm/zod-to-json-schema@3.25.1_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/readonly.js
+// node_modules/zod-to-json-schema/dist/esm/parsers/readonly.js
 var parseReadonlyDef = (def, refs) => {
   return parseDef(def.innerType._def, refs);
 };
 
-// node_modules/.pnpm/zod-to-json-schema@3.25.1_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/selectParser.js
+// node_modules/zod-to-json-schema/dist/esm/selectParser.js
 var selectParser = (def, typeName, refs) => {
   switch (typeName) {
     case ZodFirstPartyTypeKind.ZodString:
@@ -18227,7 +18227,7 @@ var selectParser = (def, typeName, refs) => {
   }
 };
 
-// node_modules/.pnpm/zod-to-json-schema@3.25.1_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parseDef.js
+// node_modules/zod-to-json-schema/dist/esm/parseDef.js
 function parseDef(def, refs, forceResolution = false) {
   const seenItem = refs.seen.get(def);
   if (refs.override) {
@@ -18283,7 +18283,7 @@ var addMeta = (def, refs, jsonSchema) => {
   return jsonSchema;
 };
 
-// node_modules/.pnpm/zod-to-json-schema@3.25.1_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/zodToJsonSchema.js
+// node_modules/zod-to-json-schema/dist/esm/zodToJsonSchema.js
 var zodToJsonSchema = (schema, options) => {
   const refs = getRefs(options);
   let definitions = typeof options === "object" && options.definitions ? Object.entries(options.definitions).reduce((acc, [name2, schema2]) => ({
@@ -18345,7 +18345,7 @@ var zodToJsonSchema = (schema, options) => {
   return combined;
 };
 
-// node_modules/.pnpm/@modelcontextprotocol+sdk@1.27.0_zod@3.25.76/node_modules/@modelcontextprotocol/sdk/dist/esm/server/zod-json-schema-compat.js
+// node_modules/@modelcontextprotocol/sdk/dist/esm/server/zod-json-schema-compat.js
 function mapMiniTarget(t) {
   if (!t)
     return "draft-7";
@@ -18387,7 +18387,7 @@ function parseWithCompat(schema, data) {
   return result.data;
 }
 
-// node_modules/.pnpm/@modelcontextprotocol+sdk@1.27.0_zod@3.25.76/node_modules/@modelcontextprotocol/sdk/dist/esm/shared/protocol.js
+// node_modules/@modelcontextprotocol/sdk/dist/esm/shared/protocol.js
 var DEFAULT_REQUEST_TIMEOUT_MSEC = 6e4;
 var Protocol = class {
   constructor(_options) {
@@ -19335,7 +19335,7 @@ function mergeCapabilities(base, additional) {
   return result;
 }
 
-// node_modules/.pnpm/@modelcontextprotocol+sdk@1.27.0_zod@3.25.76/node_modules/@modelcontextprotocol/sdk/dist/esm/validation/ajv-provider.js
+// node_modules/@modelcontextprotocol/sdk/dist/esm/validation/ajv-provider.js
 var import_ajv = __toESM(require_ajv(), 1);
 var import_ajv_formats = __toESM(require_dist(), 1);
 function createDefaultAjvInstance() {
@@ -19403,7 +19403,7 @@ var AjvJsonSchemaValidator = class {
   }
 };
 
-// node_modules/.pnpm/@modelcontextprotocol+sdk@1.27.0_zod@3.25.76/node_modules/@modelcontextprotocol/sdk/dist/esm/experimental/tasks/server.js
+// node_modules/@modelcontextprotocol/sdk/dist/esm/experimental/tasks/server.js
 var ExperimentalServerTasks = class {
   constructor(_server) {
     this._server = _server;
@@ -19616,7 +19616,7 @@ var ExperimentalServerTasks = class {
   }
 };
 
-// node_modules/.pnpm/@modelcontextprotocol+sdk@1.27.0_zod@3.25.76/node_modules/@modelcontextprotocol/sdk/dist/esm/experimental/tasks/helpers.js
+// node_modules/@modelcontextprotocol/sdk/dist/esm/experimental/tasks/helpers.js
 function assertToolsCallTaskCapability(requests, method, entityName) {
   if (!requests) {
     throw new Error(`${entityName} does not support task creation (required for ${method})`);
@@ -19651,7 +19651,7 @@ function assertClientRequestTaskCapability(requests, method, entityName) {
   }
 }
 
-// node_modules/.pnpm/@modelcontextprotocol+sdk@1.27.0_zod@3.25.76/node_modules/@modelcontextprotocol/sdk/dist/esm/server/index.js
+// node_modules/@modelcontextprotocol/sdk/dist/esm/server/index.js
 var Server = class extends Protocol {
   /**
    * Initializes this server with the given name and version information.
@@ -20031,7 +20031,7 @@ var Server = class extends Protocol {
   }
 };
 
-// node_modules/.pnpm/@modelcontextprotocol+sdk@1.27.0_zod@3.25.76/node_modules/@modelcontextprotocol/sdk/dist/esm/server/completable.js
+// node_modules/@modelcontextprotocol/sdk/dist/esm/server/completable.js
 var COMPLETABLE_SYMBOL = Symbol.for("mcp.completable");
 function isCompletable(schema) {
   return !!schema && typeof schema === "object" && COMPLETABLE_SYMBOL in schema;
@@ -20045,7 +20045,7 @@ var McpZodTypeKind;
   McpZodTypeKind2["Completable"] = "McpCompletable";
 })(McpZodTypeKind || (McpZodTypeKind = {}));
 
-// node_modules/.pnpm/@modelcontextprotocol+sdk@1.27.0_zod@3.25.76/node_modules/@modelcontextprotocol/sdk/dist/esm/shared/toolNameValidation.js
+// node_modules/@modelcontextprotocol/sdk/dist/esm/shared/toolNameValidation.js
 var TOOL_NAME_REGEX = /^[A-Za-z0-9._-]{1,128}$/;
 function validateToolName(name) {
   const warnings = [];
@@ -20103,7 +20103,7 @@ function validateAndWarnToolName(name) {
   return result.isValid;
 }
 
-// node_modules/.pnpm/@modelcontextprotocol+sdk@1.27.0_zod@3.25.76/node_modules/@modelcontextprotocol/sdk/dist/esm/experimental/tasks/mcp-server.js
+// node_modules/@modelcontextprotocol/sdk/dist/esm/experimental/tasks/mcp-server.js
 var ExperimentalMcpServerTasks = class {
   constructor(_mcpServer) {
     this._mcpServer = _mcpServer;
@@ -20118,7 +20118,7 @@ var ExperimentalMcpServerTasks = class {
   }
 };
 
-// node_modules/.pnpm/@modelcontextprotocol+sdk@1.27.0_zod@3.25.76/node_modules/@modelcontextprotocol/sdk/dist/esm/server/mcp.js
+// node_modules/@modelcontextprotocol/sdk/dist/esm/server/mcp.js
 var McpServer = class {
   constructor(serverInfo, options) {
     this._registeredResources = {};
@@ -20904,10 +20904,10 @@ var EMPTY_COMPLETION_RESULT = {
   }
 };
 
-// node_modules/.pnpm/@modelcontextprotocol+sdk@1.27.0_zod@3.25.76/node_modules/@modelcontextprotocol/sdk/dist/esm/server/stdio.js
+// node_modules/@modelcontextprotocol/sdk/dist/esm/server/stdio.js
 import process2 from "node:process";
 
-// node_modules/.pnpm/@modelcontextprotocol+sdk@1.27.0_zod@3.25.76/node_modules/@modelcontextprotocol/sdk/dist/esm/shared/stdio.js
+// node_modules/@modelcontextprotocol/sdk/dist/esm/shared/stdio.js
 var ReadBuffer = class {
   append(chunk) {
     this._buffer = this._buffer ? Buffer.concat([this._buffer, chunk]) : chunk;
@@ -20935,7 +20935,7 @@ function serializeMessage(message) {
   return JSON.stringify(message) + "\n";
 }
 
-// node_modules/.pnpm/@modelcontextprotocol+sdk@1.27.0_zod@3.25.76/node_modules/@modelcontextprotocol/sdk/dist/esm/server/stdio.js
+// node_modules/@modelcontextprotocol/sdk/dist/esm/server/stdio.js
 var StdioServerTransport = class {
   constructor(_stdin = process2.stdin, _stdout = process2.stdout) {
     this._stdin = _stdin;
@@ -21895,104 +21895,6 @@ function readSpecificFiles(rootDir, filePaths, includeEssentials = true, debug =
   return files;
 }
 
-// utils/progress-messages.ts
-var CONTENT_MATCHERS = [
-  // Local prep phase
-  { pattern: /Starting share for/i, message: "Preparing your project..." },
-  { pattern: /Checking Share API/i, message: "Preparing your project..." },
-  { pattern: /Share API is healthy/i, message: "Preparing your project..." },
-  { pattern: /Getting git info/i, message: "Loading your code..." },
-  { pattern: /Reading project files|Reading all project/i, message: "Loading your code..." },
-  { pattern: /Analyzing dependencies/i, message: "Loading your code..." },
-  { pattern: /Reading.*analyzed files/i, message: "Loading your code..." },
-  { pattern: /Authenticating with InFlight/i, message: "Loading your code..." },
-  { pattern: /Starting share on server/i, message: "Uploading your project..." },
-  // Chunked upload phase
-  { pattern: /Large project.*chunked/i, message: "Uploading your project..." },
-  { pattern: /Splitting into.*chunks/i, message: "Uploading your project..." },
-  { pattern: /Initializing chunked/i, message: "Uploading your project..." },
-  { pattern: /Uploading chunk/i, message: "Uploading your project..." },
-  { pattern: /Finalizing upload/i, message: "Upload complete, starting analysis..." },
-  // Server sandbox & upload phase
-  { pattern: /Validating workspace/i, message: "Setting things up..." },
-  { pattern: /Creating sandbox/i, message: "Setting things up..." },
-  { pattern: /Uploading.*files/i, message: "Uploading your project..." },
-  { pattern: /Writing git diff/i, message: "Preparing your changes for review..." },
-  { pattern: /Preparing analysis/i, message: "Getting ready to analyze..." },
-  // Claude installation & analysis phase
-  { pattern: /Checking Claude|Installing Claude/i, message: "Getting ready to analyze..." },
-  { pattern: /Setting up.*user|non-root/i, message: "Getting ready to analyze..." },
-  { pattern: /Starting Claude/i, message: "Running a detailed analysis of your changes..." },
-  { pattern: /Claude is analyzing/i, message: "Analyzing your changes..." },
-  { pattern: /Claude is working/i, message: "Still analyzing..." },
-  { pattern: /^Claude:/i, message: "Analyzing your changes..." },
-  { pattern: /Analyzing\.\.\. \(\d+s\)/i, message: "Still analyzing..." },
-  { pattern: /Claude finished/i, message: "Analysis complete! Building your preview..." },
-  // Prototype found
-  { pattern: /Prototype ready|Prototype found/i, message: "Analysis complete! Building your preview..." },
-  // Deploy phase
-  { pattern: /Configuring preview/i, message: "Building your preview..." },
-  { pattern: /Installing dependencies/i, message: "Installing dependencies..." },
-  { pattern: /Starting dev server/i, message: "Starting your preview..." },
-  { pattern: /Waiting for server/i, message: "Starting your preview..." },
-  { pattern: /Setting up preview tunnel/i, message: "Setting up your preview link..." },
-  { pattern: /Preview tunnel ready/i, message: "Preview link is ready!" },
-  { pattern: /Waiting for Vite/i, message: "Almost there..." },
-  { pattern: /Preview ready/i, message: "Preview is live!" },
-  { pattern: /Preview may still be compiling/i, message: "Almost there..." },
-  // Finalization
-  { pattern: /Creating InFlight version/i, message: "Creating your InFlight version..." },
-  { pattern: /Tracking sandbox/i, message: "Saving your share..." },
-  { pattern: /Generating diff summary/i, message: "Summarizing your changes..." },
-  { pattern: /Generating review/i, message: "Preparing feedback questions..." },
-  { pattern: /^Complete!$/i, message: "All done!" },
-  { pattern: /Share complete/i, message: "All done!" },
-  // Clone-specific messages
-  { pattern: /Checking repository access/i, message: "Checking repository access..." },
-  { pattern: /Cloning repository/i, message: "Cloning your repository..." },
-  { pattern: /Setting up project files/i, message: "Setting up your project..." },
-  { pattern: /Git clone available/i, message: "Found a faster way to load your project!" }
-];
-var PHASE_MESSAGES = [
-  { maxPct: 5, message: "Preparing your project..." },
-  { maxPct: 12, message: "Loading your code..." },
-  { maxPct: 42, message: "Uploading your project..." },
-  { maxPct: 50, message: "Setting things up..." },
-  { maxPct: 55, message: "Getting ready to analyze..." },
-  { maxPct: 70, message: "Analyzing your changes..." },
-  { maxPct: 80, message: "Building your preview..." },
-  { maxPct: 90, message: "Setting up your preview link..." },
-  { maxPct: 96, message: "Creating your InFlight version..." },
-  { maxPct: 100, message: "Wrapping up..." }
-];
-var lastFriendlyMessage = "";
-function toFriendlyMessage(percentage, rawMessage) {
-  let friendly;
-  for (const matcher of CONTENT_MATCHERS) {
-    if (matcher.pattern.test(rawMessage)) {
-      friendly = matcher.message;
-      break;
-    }
-  }
-  if (!friendly) {
-    for (const phase of PHASE_MESSAGES) {
-      if (percentage <= phase.maxPct) {
-        friendly = phase.message;
-        break;
-      }
-    }
-  }
-  friendly = friendly || "Working on it...";
-  if (friendly === lastFriendlyMessage) {
-    return null;
-  }
-  lastFriendlyMessage = friendly;
-  return friendly;
-}
-function resetMessageState() {
-  lastFriendlyMessage = "";
-}
-
 // index.ts
 var ENVIRONMENTS = {
   local: { shareApi: "http://localhost:3002" },
@@ -22057,21 +21959,13 @@ function getGitInfo(dir) {
         continue;
       }
     }
-    let branchExistsOnRemote = false;
-    try {
-      const lsRemoteOutput = execSync2(`git ls-remote --heads origin ${currentBranch}`, { cwd: dir, encoding: "utf-8" }).trim();
-      branchExistsOnRemote = lsRemoteOutput.length > 0;
-    } catch {
-      branchExistsOnRemote = false;
-    }
     return {
       isGitRepo: true,
       currentBranch,
       baseBranch,
       gitUrl,
       diff,
-      diffStat,
-      branchExistsOnRemote
+      diffStat
     };
   } catch {
     return { isGitRepo: true };
@@ -22110,6 +22004,17 @@ async function log(message, level = "info") {
   } catch {
   }
 }
+var BAR_WIDTH = 20;
+function renderProgressBar(pct, label) {
+  const clamped = Math.max(0, Math.min(100, pct));
+  const filled = Math.round(clamped / 100 * BAR_WIDTH);
+  const empty = BAR_WIDTH - filled;
+  const bar = "\u2588".repeat(filled) + "\u2591".repeat(empty);
+  const pctStr = `${Math.round(clamped)}%`.padStart(4);
+  return label ? `${bar} ${pctStr}  ${label}` : `${bar} ${pctStr}`;
+}
+var lastProgressPct = -1;
+var lastProgressTime = 0;
 server.tool(
   "auth_status",
   "Check if you're signed in to Inflight",
@@ -22200,110 +22105,6 @@ server.tool(
   }
 );
 server.tool(
-  "list_workspaces",
-  "List all InFlight workspaces the user belongs to. Shows which workspace is currently selected.",
-  {},
-  async () => {
-    const authData = getAuthData();
-    if (!authData) {
-      return {
-        content: [{ type: "text", text: "Not authenticated. Please run inflight_login first." }],
-        isError: true
-      };
-    }
-    try {
-      const response = await fetch(`${SHARE_API_URL}/share/workspaces`, {
-        headers: { Authorization: `Bearer ${authData.apiKey}` }
-      });
-      if (!response.ok) {
-        return {
-          content: [{ type: "text", text: `Error fetching workspaces: ${response.statusText}` }],
-          isError: true
-        };
-      }
-      const result = await response.json();
-      return {
-        content: [{
-          type: "text",
-          text: JSON.stringify({
-            workspaces: result.workspaces,
-            currentWorkspaceId: authData.defaultWorkspaceId || null
-          }, null, 2)
-        }]
-      };
-    } catch {
-      return {
-        content: [{ type: "text", text: `Error: Could not reach Share API at ${SHARE_API_URL}` }],
-        isError: true
-      };
-    }
-  }
-);
-server.tool(
-  "set_workspace",
-  "Set the active InFlight workspace. This workspace will be used for sharing.",
-  {
-    workspaceId: external_exports.string().describe("The workspace ID to set as active")
-  },
-  async (args) => {
-    const authData = getAuthData();
-    if (!authData) {
-      return {
-        content: [{ type: "text", text: "Not authenticated. Please run inflight_login first." }],
-        isError: true
-      };
-    }
-    try {
-      const response = await fetch(`${SHARE_API_URL}/share/workspaces`, {
-        headers: { Authorization: `Bearer ${authData.apiKey}` }
-      });
-      if (response.ok) {
-        const result = await response.json();
-        const workspace = result.workspaces.find((ws) => ws.id === args.workspaceId);
-        if (!workspace) {
-          return {
-            content: [{
-              type: "text",
-              text: JSON.stringify({
-                error: "Workspace not found or you don't have access",
-                availableWorkspaces: result.workspaces
-              }, null, 2)
-            }],
-            isError: true
-          };
-        }
-        authData.defaultWorkspaceId = args.workspaceId;
-        saveAuthData(authData);
-        return {
-          content: [{
-            type: "text",
-            text: JSON.stringify({
-              success: true,
-              message: `Active workspace set to "${workspace.name}"`,
-              workspaceId: workspace.id,
-              workspaceName: workspace.name,
-              workspaceSlug: workspace.slug
-            }, null, 2)
-          }]
-        };
-      }
-    } catch {
-    }
-    authData.defaultWorkspaceId = args.workspaceId;
-    saveAuthData(authData);
-    return {
-      content: [{
-        type: "text",
-        text: JSON.stringify({
-          success: true,
-          message: `Active workspace set to ${args.workspaceId}`,
-          workspaceId: args.workspaceId
-        }, null, 2)
-      }]
-    };
-  }
-);
-server.tool(
   "get_git_info",
   "Get branch and change info from a git project",
   {
@@ -22360,76 +22161,6 @@ server.tool(
   }
 );
 server.tool(
-  "check_existing_versions",
-  "Check if a git repository has been shared to Inflight before. Returns project info and version count if found. Use this before sharing to let the user decide whether to add a new version or create a new project.",
-  {
-    directory: external_exports.string().optional().describe("Project directory (defaults to cwd)"),
-    workspaceId: external_exports.string().optional().describe("Inflight workspace ID to check in")
-  },
-  async (args) => {
-    const dir = args.directory || process.cwd();
-    const gitInfo = getGitInfo(dir);
-    if (!gitInfo.isGitRepo || !gitInfo.gitUrl) {
-      return {
-        content: [{ type: "text", text: JSON.stringify({ found: false, error: "Not a git repository or no remote configured" }) }]
-      };
-    }
-    if (!isAuthenticated()) {
-      return {
-        content: [{ type: "text", text: JSON.stringify({ found: false, error: "Not authenticated. Please run inflight_login first." }) }]
-      };
-    }
-    const auth = getAuthData();
-    if (!auth?.apiKey) {
-      return {
-        content: [{ type: "text", text: JSON.stringify({ found: false, error: "No API key. Please run inflight_login first." }) }]
-      };
-    }
-    try {
-      const url = new URL(`${SHARE_API_URL}/share/lookup`);
-      url.searchParams.set("gitRemoteUrl", gitInfo.gitUrl);
-      if (args.workspaceId) {
-        url.searchParams.set("workspaceId", args.workspaceId);
-      }
-      const response = await fetch(url.toString(), {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${auth.apiKey}`
-        }
-      });
-      if (!response.ok) {
-        const text = await response.text();
-        console.error(`[Local MCP] Lookup failed: ${response.status} ${text}`);
-        return {
-          content: [{ type: "text", text: JSON.stringify({ found: false, error: `Lookup failed: ${response.status}` }) }]
-        };
-      }
-      const data = await response.json();
-      if (data.found && data.project) {
-        return {
-          content: [{
-            type: "text",
-            text: JSON.stringify({
-              found: true,
-              project: data.project,
-              message: `This repository has been shared before. Project "${data.project.name}" has ${data.project.versionCount} version(s). To add a new version (V${data.project.versionCount + 1}), use existingProjectId="${data.project.id}" when calling share. Otherwise, a new project will be created.`
-            }, null, 2)
-          }]
-        };
-      }
-      return {
-        content: [{ type: "text", text: JSON.stringify({ found: false, message: "No existing project found for this repository. A new project will be created." }) }]
-      };
-    } catch (error2) {
-      const message = error2 instanceof Error ? error2.message : String(error2);
-      console.error(`[Local MCP] check_existing_versions failed: ${message}`);
-      return {
-        content: [{ type: "text", text: JSON.stringify({ found: false, error: message }) }]
-      };
-    }
-  }
-);
-server.tool(
   "share",
   "Share your project to Inflight for review. Uploads your code, builds a live prototype, and creates a shareable link.",
   {
@@ -22441,26 +22172,33 @@ server.tool(
   async (args, extra) => {
     const dir = args.directory || process.cwd();
     const progressToken = extra._meta?.progressToken;
-    resetMessageState();
+    lastProgressPct = -1;
+    lastProgressTime = 0;
     const sendProgress = async (progress, total, message) => {
-      if (message) {
-        await log(`[${progress}%] ${message}`);
+      const pct = Math.round(progress / total * 100);
+      const now = Date.now();
+      const isBookend = pct === 0 || pct >= 100;
+      const enoughChange = Math.abs(pct - lastProgressPct) >= 3;
+      const enoughTime = now - lastProgressTime >= 500;
+      if (!isBookend && !enoughChange && !enoughTime) {
+        return;
       }
-      if (message && progressToken && extra.sendNotification) {
-        const friendly = toFriendlyMessage(progress, message);
-        if (friendly) {
-          try {
-            await extra.sendNotification({
-              method: "notifications/progress",
-              params: {
-                progressToken,
-                progress,
-                total,
-                message: friendly
-              }
-            });
-          } catch {
-          }
+      lastProgressPct = pct;
+      lastProgressTime = now;
+      const bar = renderProgressBar(pct, message);
+      await log(bar);
+      if (progressToken && extra.sendNotification) {
+        try {
+          await extra.sendNotification({
+            method: "notifications/progress",
+            params: {
+              progressToken,
+              progress,
+              total,
+              ...message && { message }
+            }
+          });
+        } catch {
         }
       }
     };
@@ -22495,9 +22233,36 @@ server.tool(
       await log("No branch diff found \u2014 sharing the full project instead.");
     }
     await log(`Branch: ${gitInfo.currentBranch}`);
+    let files;
+    let usedStaticAnalysis = false;
+    if (args.useStaticAnalysis) {
+      await sendProgress(8, 100, "Analyzing project...");
+      try {
+        const analysisResult = await analyzeProjectDependencies(dir, void 0, gitInfo.baseBranch);
+        const localFiles = analysisResult.dependencies.localFiles;
+        if (localFiles.length > 0) {
+          await sendProgress(10, 100, "Gathering relevant files...");
+          files = readSpecificFiles(dir, localFiles, true, true);
+          usedStaticAnalysis = true;
+        } else {
+          await sendProgress(10, 100, "Gathering project files...");
+          files = readProjectFiles(dir, true);
+        }
+      } catch (analysisError) {
+        await sendProgress(10, 100, "Gathering project files...");
+        files = readProjectFiles(dir, true);
+      }
+    } else {
+      await sendProgress(8, 100, "Gathering project files...");
+      files = readProjectFiles(dir, true);
+    }
+    const fileCount = Object.keys(files).length;
+    const totalSize = calculateTotalSize(files);
+    const sizeMB = (totalSize / (1024 * 1024)).toFixed(2);
+    await log(`${fileCount} files (${sizeMB} MB)`);
     let authData = getAuthData();
     if (!authData) {
-      await sendProgress(8, 100, "Authenticating with InFlight...");
+      await sendProgress(10, 100, "Signing in to Inflight...");
       try {
         authData = await authenticate((msg) => log(msg));
       } catch (authError) {
@@ -22510,165 +22275,6 @@ ${authMessage}` }],
         };
       }
     }
-    let resolvedWorkspaceId = args.workspaceId || authData.defaultWorkspaceId;
-    let resolvedWorkspaceName;
-    if (!resolvedWorkspaceId) {
-      try {
-        await sendProgress(9, 100, "Looking up your workspaces...");
-        const wsResponse = await fetch(`${SHARE_API_URL}/share/workspaces`, {
-          headers: {
-            Authorization: `Bearer ${authData.apiKey}`
-          }
-        });
-        if (wsResponse.ok) {
-          const wsResult = await wsResponse.json();
-          if (wsResult.workspaces.length === 0) {
-            return {
-              content: [{ type: "text", text: "Error: You don't belong to any InFlight workspaces. Please create a workspace first at https://www.inflight.co" }],
-              isError: true
-            };
-          } else {
-            resolvedWorkspaceId = wsResult.workspaces[0].id;
-            resolvedWorkspaceName = wsResult.workspaces[0].name;
-            authData.defaultWorkspaceId = resolvedWorkspaceId;
-            saveAuthData(authData);
-            await log(`  Auto-selected workspace: ${resolvedWorkspaceName} (${wsResult.workspaces.length} workspace${wsResult.workspaces.length > 1 ? "s" : ""} available)`);
-          }
-        }
-      } catch {
-        await log("  Workspace lookup failed, proceeding without workspace selection");
-      }
-    }
-    let useGitClone = false;
-    let githubAppTip = null;
-    let branchNotPushedTip = null;
-    if (gitInfo.gitUrl && resolvedWorkspaceId) {
-      if (!gitInfo.branchExistsOnRemote) {
-        await log(`  Branch "${gitInfo.currentBranch}" not found on remote \u2014 clone mode requires pushed branches`);
-        branchNotPushedTip = `Your branch "${gitInfo.currentBranch}" hasn't been pushed to the remote yet. Push it with \`git push -u origin ${gitInfo.currentBranch}\` to enable faster sharing via git clone.`;
-      } else {
-        try {
-          await sendProgress(9, 100, "Checking repository access...");
-          const checkResponse = await fetch(`${SHARE_API_URL}/share/check-clone`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${authData.apiKey}`
-            },
-            body: JSON.stringify({
-              gitUrl: gitInfo.gitUrl,
-              workspaceId: resolvedWorkspaceId
-            })
-          });
-          if (checkResponse.ok) {
-            const checkResult = await checkResponse.json();
-            useGitClone = checkResult.cloneAvailable === true;
-            if (useGitClone) {
-              await log(`  Git clone available for ${gitInfo.gitUrl}`);
-            } else if (gitInfo.gitUrl.includes("github")) {
-              await log(`  GitHub repo detected but InFlight GitHub App not installed for this workspace`);
-              const installUrl = checkResult.workspaceSlug ? `https://www.inflight.co/${checkResult.workspaceSlug}/settings/integrations` : "https://www.inflight.co";
-              githubAppTip = `The InFlight GitHub App is not installed for this repository. Installing it will make sharing significantly faster by cloning your repo directly instead of uploading files. Would you like to install it? Go to: ${installUrl}`;
-            }
-          }
-        } catch {
-          await log(`  Clone check failed, falling back to file upload`);
-        }
-      }
-    }
-    if (useGitClone) {
-      await sendProgress(10, 100, "Git clone available, skipping file upload...");
-      try {
-        const result = await callCloneShareWithSSE(
-          {
-            gitDiff: {
-              diff: gitInfo.diff,
-              diffStat: gitInfo.diffStat || "",
-              baseBranch: gitInfo.baseBranch || "main",
-              currentBranch: gitInfo.currentBranch || "unknown"
-            },
-            gitUrl: gitInfo.gitUrl,
-            currentBranch: gitInfo.currentBranch || "unknown",
-            workspaceId: resolvedWorkspaceId,
-            existingProjectId: args.existingProjectId
-          },
-          authData.apiKey,
-          // Remap server percentages (0-100) to our range (10-100)
-          // so progress never jumps backwards after local steps reach 10%
-          async (percentage, step) => {
-            const remapped = 10 + Math.floor(percentage / 100 * 90);
-            await sendProgress(remapped, 100, step);
-          },
-          async (message) => {
-            await log(`Server error: ${message}`, "error");
-          }
-        );
-        await sendProgress(100, 100, "Share complete!");
-        await log("========== SUCCESS (clone mode) ==========");
-        await log(`Preview URL: ${result.previewUrl}`);
-        await log(`InFlight URL: ${result.inflightUrl}`);
-        openInBrowser(result.inflightUrl);
-        await log("Opening InFlight in browser...");
-        return {
-          content: [{
-            type: "text",
-            text: JSON.stringify({
-              success: true,
-              previewUrl: result.previewUrl,
-              sandboxUrl: result.sandboxUrl,
-              sandboxId: result.sandboxId,
-              inflightUrl: result.inflightUrl,
-              versionId: result.versionId,
-              projectId: result.projectId,
-              cloneMode: true,
-              diffSummary: result.diffSummary,
-              ...resolvedWorkspaceName && { workspace: resolvedWorkspaceName }
-            }, null, 2)
-          }]
-        };
-      } catch (error2) {
-        const message = error2 instanceof Error ? error2.message : String(error2);
-        await log(`Clone share failed: ${message}`, "warning");
-        await log(`Falling back to file upload...`);
-      }
-    }
-    let files;
-    let usedStaticAnalysis = false;
-    if (args.useStaticAnalysis) {
-      await sendProgress(10, 100, "Analyzing dependencies...");
-      try {
-        const analysisResult = await analyzeProjectDependencies(dir, void 0, gitInfo.baseBranch);
-        const localFiles = analysisResult.dependencies.localFiles;
-        await log(`  Analysis completed in ${analysisResult.metadata.analysisTimeMs}ms`);
-        await log(`  Changed files: ${analysisResult.changedFiles.length}`);
-        await log(`  UI-relevant entry points: ${analysisResult.metadata.entryPoints.length}`);
-        await log(`  Local dependencies: ${localFiles.length}`);
-        await log(`  NPM packages: ${analysisResult.dependencies.npmPackages.length}`);
-        if (localFiles.length > 0) {
-          await sendProgress(11, 100, `Reading ${localFiles.length} analyzed files...`);
-          files = readSpecificFiles(dir, localFiles, true, true);
-          usedStaticAnalysis = true;
-          await log(`  Using static analysis: ${Object.keys(files).length} files to upload`);
-        } else {
-          await log(`  No UI-relevant dependencies found, falling back to full upload`);
-          await sendProgress(11, 100, "Reading all project files...");
-          files = readProjectFiles(dir, true);
-        }
-      } catch (analysisError) {
-        const errorMsg = analysisError instanceof Error ? analysisError.message : String(analysisError);
-        await log(`  Static analysis failed: ${errorMsg}`, "warning");
-        await log(`  Falling back to full project upload`);
-        await sendProgress(11, 100, "Reading all project files...");
-        files = readProjectFiles(dir, true);
-      }
-    } else {
-      await sendProgress(10, 100, "Reading project files...");
-      files = readProjectFiles(dir, true);
-    }
-    const fileCount = Object.keys(files).length;
-    const totalSize = calculateTotalSize(files);
-    const sizeMB = (totalSize / (1024 * 1024)).toFixed(2);
-    await log(`  ${usedStaticAnalysis ? "Analyzed" : "Found"} ${fileCount} files (${sizeMB} MB)`);
     const filesAsFileMap = files;
     const useChunkedUpload = needsChunkedUpload(filesAsFileMap);
     if (useChunkedUpload) {
@@ -22683,7 +22289,7 @@ ${authMessage}` }],
             currentBranch: gitInfo.currentBranch || "unknown"
           },
           authData.apiKey,
-          resolvedWorkspaceId,
+          args.workspaceId,
           args.existingProjectId,
           gitInfo.gitUrl,
           async (percentage, step) => {
@@ -22707,10 +22313,7 @@ ${authMessage}` }],
               versionId: result.versionId,
               projectId: result.projectId,
               fileCount,
-              chunkedUpload: true,
-              ...resolvedWorkspaceName && { workspace: resolvedWorkspaceName },
-              ...githubAppTip && { githubAppTip },
-              ...branchNotPushedTip && { branchNotPushedTip }
+              chunkedUpload: true
             }, null, 2)
           }]
         };
@@ -22737,16 +22340,13 @@ ${authMessage}` }],
             currentBranch: gitInfo.currentBranch || "unknown"
           },
           userId: authData.userId,
-          workspaceId: resolvedWorkspaceId,
+          workspaceId: args.workspaceId,
           existingProjectId: args.existingProjectId,
           gitUrl: gitInfo.gitUrl
         },
         authData.apiKey,
-        // Progress callback - remap server percentages (0-100) to our range (12-100)
-        // so progress never jumps backwards after local steps reach 12%
         async (percentage, step) => {
-          const remapped = 12 + Math.floor(percentage / 100 * 88);
-          await sendProgress(remapped, 100, step);
+          await sendProgress(percentage, 100, step);
         },
         async (message) => {
           await log(`Error: ${message}`, "error");
@@ -22767,10 +22367,7 @@ ${authMessage}` }],
             versionId: result.versionId,
             projectId: result.projectId,
             fileCount,
-            diffSummary: result.diffSummary,
-            ...resolvedWorkspaceName && { workspace: resolvedWorkspaceName },
-            ...githubAppTip && { githubAppTip },
-            ...branchNotPushedTip && { branchNotPushedTip }
+            diffSummary: result.diffSummary
           }, null, 2)
         }]
       };
@@ -22851,72 +22448,6 @@ async function callShareWithSSE(request, apiKey, onProgress, onError) {
     }
   }
   throw new Error("Share stream ended without completion");
-}
-async function callCloneShareWithSSE(request, apiKey, onProgress, onError) {
-  const url = `${SHARE_API_URL}/share/clone`;
-  const response = await fetch(url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "text/event-stream",
-      Authorization: `Bearer ${apiKey}`
-    },
-    body: JSON.stringify(request)
-  });
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`Clone share failed (${response.status}): ${errorText || "Empty response"}`);
-  }
-  const reader = response.body?.getReader();
-  if (!reader) {
-    throw new Error("No response body");
-  }
-  const decoder = new TextDecoder();
-  let buffer = "";
-  while (true) {
-    const { done, value } = await reader.read();
-    if (done)
-      break;
-    buffer += decoder.decode(value, { stream: true });
-    const lines = buffer.split("\n");
-    buffer = lines.pop() || "";
-    let currentEvent = "";
-    for (const line of lines) {
-      if (line.startsWith("event: ")) {
-        currentEvent = line.slice(7).trim();
-      } else if (line.startsWith("data: ")) {
-        try {
-          const data = JSON.parse(line.slice(6));
-          if (currentEvent === "progress" || !currentEvent && data.step) {
-            const pct = data.percentage || 0;
-            const step = data.step || "Processing...";
-            await onProgress(pct, step);
-          } else if (currentEvent === "complete") {
-            return {
-              inflightUrl: data.inflightUrl,
-              versionId: data.versionId,
-              projectId: data.projectId,
-              sandboxId: data.sandboxId,
-              sandboxUrl: data.sandboxUrl,
-              previewUrl: data.previewUrl || data.sandboxUrl,
-              ngrokUrl: data.ngrokUrl,
-              diffSummary: data.diffSummary
-            };
-          } else if (currentEvent === "error") {
-            await onError(data.message || "Clone share failed");
-            throw new Error(data.message || "Clone share failed");
-          }
-        } catch (e) {
-          if (e instanceof Error && e.message !== "Clone share failed") {
-            continue;
-          }
-          throw e;
-        }
-        currentEvent = "";
-      }
-    }
-  }
-  throw new Error("Clone share stream ended without completion");
 }
 async function callChunkedShare(files, gitDiff, apiKey, workspaceId, existingProjectId, gitUrl, onProgress, onError) {
   const chunks = chunkFiles(files);
