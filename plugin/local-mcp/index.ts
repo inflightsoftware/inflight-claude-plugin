@@ -14,7 +14,7 @@ import { z } from "zod";
 import { execSync } from "child_process";
 import { readFileSync, existsSync } from "fs";
 import { join } from "path";
-import { getAuthData, isAuthenticated, authenticate, clearAuthData } from "./auth.js";
+import { getAuthData, saveAuthData, isAuthenticated, authenticate, clearAuthData } from "./auth.js";
 import { analyzeProjectDependencies } from "./analyzers/dependency-analyzer.js";
 import {
   needsChunkedUpload,
@@ -25,6 +25,7 @@ import {
   readSpecificFiles,
   type FileMap,
 } from "./utils/file-utils.js";
+import { toFriendlyMessage, resetMessageState } from "./utils/progress-messages.js";
 
 // Environment-based URL configuration
 // Set INFLIGHT_ENV=local in .mcp.json to use local dev servers
@@ -70,6 +71,7 @@ function getGitInfo(dir: string): {
   gitUrl?: string;
   diff?: string;
   diffStat?: string;
+  branchExistsOnRemote?: boolean;
 } {
   try {
     execSync('git rev-parse --git-dir', { cwd: dir, stdio: 'pipe' });
@@ -116,6 +118,15 @@ function getGitInfo(dir: string): {
       }
     }
 
+    // Check if the current branch exists on the remote
+    let branchExistsOnRemote = false;
+    try {
+      const lsRemoteOutput = execSync(`git ls-remote --heads origin ${currentBranch}`, { cwd: dir, encoding: 'utf-8' }).trim();
+      branchExistsOnRemote = lsRemoteOutput.length > 0;
+    } catch {
+      branchExistsOnRemote = false;
+    }
+
     return {
       isGitRepo: true,
       currentBranch,
@@ -123,6 +134,7 @@ function getGitInfo(dir: string): {
       gitUrl,
       diff,
       diffStat,
+      branchExistsOnRemote,
     };
   } catch {
     return { isGitRepo: true };
@@ -175,24 +187,6 @@ async function log(message: string, level: "info" | "debug" | "warning" | "error
   }
 }
 
-/**
- * Render a visual progress bar string
- *
- *   ████████████░░░░░░░░  60%  Uploading to Inflight...
- */
-const BAR_WIDTH = 20;
-function renderProgressBar(pct: number, label?: string): string {
-  const clamped = Math.max(0, Math.min(100, pct));
-  const filled = Math.round((clamped / 100) * BAR_WIDTH);
-  const empty = BAR_WIDTH - filled;
-  const bar = "█".repeat(filled) + "░".repeat(empty);
-  const pctStr = `${Math.round(clamped)}%`.padStart(4);
-  return label ? `${bar} ${pctStr}  ${label}` : `${bar} ${pctStr}`;
-}
-
-/** Track last progress to throttle updates */
-let lastProgressPct = -1;
-let lastProgressTime = 0;
 
 // Tool: Check authentication status
 server.tool(
@@ -293,6 +287,132 @@ server.tool(
   }
 );
 
+// Tool: List workspaces
+server.tool(
+  "list_workspaces",
+  "List all InFlight workspaces the user belongs to. Shows which workspace is currently selected.",
+  {},
+  async () => {
+    const authData = getAuthData();
+    if (!authData) {
+      return {
+        content: [{ type: "text" as const, text: "Not authenticated. Please run inflight_login first." }],
+        isError: true,
+      };
+    }
+
+    try {
+      const response = await fetch(`${SHARE_API_URL}/share/workspaces`, {
+        headers: { Authorization: `Bearer ${authData.apiKey}` },
+      });
+
+      if (!response.ok) {
+        return {
+          content: [{ type: "text" as const, text: `Error fetching workspaces: ${response.statusText}` }],
+          isError: true,
+        };
+      }
+
+      const result = await response.json() as {
+        workspaces: Array<{ id: string; name: string; slug: string; avatarUrl: string | null }>;
+      };
+
+      return {
+        content: [{
+          type: "text" as const,
+          text: JSON.stringify({
+            workspaces: result.workspaces,
+            currentWorkspaceId: authData.defaultWorkspaceId || null,
+          }, null, 2),
+        }],
+      };
+    } catch {
+      return {
+        content: [{ type: "text" as const, text: `Error: Could not reach Share API at ${SHARE_API_URL}` }],
+        isError: true,
+      };
+    }
+  }
+);
+
+// Tool: Set active workspace
+server.tool(
+  "set_workspace",
+  "Set the active InFlight workspace. This workspace will be used for sharing.",
+  {
+    workspaceId: z.string().describe("The workspace ID to set as active"),
+  },
+  async (args) => {
+    const authData = getAuthData();
+    if (!authData) {
+      return {
+        content: [{ type: "text" as const, text: "Not authenticated. Please run inflight_login first." }],
+        isError: true,
+      };
+    }
+
+    // Verify the workspace exists and user has access
+    try {
+      const response = await fetch(`${SHARE_API_URL}/share/workspaces`, {
+        headers: { Authorization: `Bearer ${authData.apiKey}` },
+      });
+
+      if (response.ok) {
+        const result = await response.json() as {
+          workspaces: Array<{ id: string; name: string; slug: string }>;
+        };
+        const workspace = result.workspaces.find((ws) => ws.id === args.workspaceId);
+        if (!workspace) {
+          return {
+            content: [{
+              type: "text" as const,
+              text: JSON.stringify({
+                error: "Workspace not found or you don't have access",
+                availableWorkspaces: result.workspaces,
+              }, null, 2),
+            }],
+            isError: true,
+          };
+        }
+
+        // Persist the selection
+        authData.defaultWorkspaceId = args.workspaceId;
+        saveAuthData(authData);
+
+        return {
+          content: [{
+            type: "text" as const,
+            text: JSON.stringify({
+              success: true,
+              message: `Active workspace set to "${workspace.name}"`,
+              workspaceId: workspace.id,
+              workspaceName: workspace.name,
+              workspaceSlug: workspace.slug,
+            }, null, 2),
+          }],
+        };
+      }
+    } catch {
+      // Fall through
+    }
+
+    // If we can't verify, still save it
+    authData.defaultWorkspaceId = args.workspaceId;
+    saveAuthData(authData);
+
+    return {
+      content: [{
+        type: "text" as const,
+        text: JSON.stringify({
+          success: true,
+          message: `Active workspace set to ${args.workspaceId}`,
+          workspaceId: args.workspaceId,
+        }, null, 2),
+      }],
+    };
+  }
+);
+
 // Tool: Get git info
 server.tool(
   "get_git_info",
@@ -358,6 +478,91 @@ server.tool(
   }
 );
 
+// Tool: Check Existing Versions
+server.tool(
+  "check_existing_versions",
+  "Check if a git repository has been shared to Inflight before. Returns project info and version count if found. Use this before sharing to let the user decide whether to add a new version or create a new project.",
+  {
+    directory: z.string().optional().describe("Project directory (defaults to cwd)"),
+    workspaceId: z.string().optional().describe("Inflight workspace ID to check in"),
+  },
+  async (args) => {
+    const dir = args.directory || process.cwd();
+
+    // Get git remote URL
+    const gitInfo = getGitInfo(dir);
+    if (!gitInfo.isGitRepo || !gitInfo.gitUrl) {
+      return {
+        content: [{ type: "text" as const, text: JSON.stringify({ found: false, error: "Not a git repository or no remote configured" }) }],
+      };
+    }
+
+    // Ensure authenticated
+    if (!isAuthenticated()) {
+      return {
+        content: [{ type: "text" as const, text: JSON.stringify({ found: false, error: "Not authenticated. Please run inflight_login first." }) }],
+      };
+    }
+
+    const auth = getAuthData();
+    if (!auth?.apiKey) {
+      return {
+        content: [{ type: "text" as const, text: JSON.stringify({ found: false, error: "No API key. Please run inflight_login first." }) }],
+      };
+    }
+
+    try {
+      const url = new URL(`${SHARE_API_URL}/share/lookup`);
+      url.searchParams.set("gitRemoteUrl", gitInfo.gitUrl);
+      if (args.workspaceId) {
+        url.searchParams.set("workspaceId", args.workspaceId);
+      }
+
+      const response = await fetch(url.toString(), {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${auth.apiKey}`,
+        },
+      });
+
+      if (!response.ok) {
+        const text = await response.text();
+        console.error(`[Local MCP] Lookup failed: ${response.status} ${text}`);
+        return {
+          content: [{ type: "text" as const, text: JSON.stringify({ found: false, error: `Lookup failed: ${response.status}` }) }],
+        };
+      }
+
+      const data = await response.json() as { found: boolean; project: any };
+
+      if (data.found && data.project) {
+        return {
+          content: [{
+            type: "text" as const,
+            text: JSON.stringify({
+              found: true,
+              project: data.project,
+              message: `This repository has been shared before. Project "${data.project.name}" has ${data.project.versionCount} version(s). ` +
+                `To add a new version (V${data.project.versionCount + 1}), use existingProjectId="${data.project.id}" when calling share. ` +
+                `Otherwise, a new project will be created.`,
+            }, null, 2),
+          }],
+        };
+      }
+
+      return {
+        content: [{ type: "text" as const, text: JSON.stringify({ found: false, message: "No existing project found for this repository. A new project will be created." }) }],
+      };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      console.error(`[Local MCP] check_existing_versions failed: ${message}`);
+      return {
+        content: [{ type: "text" as const, text: JSON.stringify({ found: false, error: message }) }],
+      };
+    }
+  }
+);
+
 // Tool: Share
 server.tool(
   "share",
@@ -374,44 +579,34 @@ server.tool(
     // Get progressToken from _meta - required for progress notifications to show in Claude Code
     const progressToken = (extra as any)._meta?.progressToken;
 
-    // Reset progress state for this share
-    lastProgressPct = -1;
-    lastProgressTime = 0;
+    // Reset friendly message deduplication state for this share operation
+    resetMessageState();
 
     // Helper to send progress notifications to MCP client
-    // Renders a visual progress bar and throttles updates
+    // Logs the raw message for debugging, but shows a friendly version to the user
     const sendProgress = async (progress: number, total: number, message?: string) => {
-      const pct = Math.round((progress / total) * 100);
-      const now = Date.now();
-
-      // Throttle: skip if <3% change and <500ms elapsed, unless it's start/end
-      const isBookend = pct === 0 || pct >= 100;
-      const enoughChange = Math.abs(pct - lastProgressPct) >= 3;
-      const enoughTime = now - lastProgressTime >= 500;
-
-      if (!isBookend && !enoughChange && !enoughTime) {
-        return;
+      if (message) {
+        // Always log the raw technical message to stderr for debugging
+        await log(`[${progress}%] ${message}`);
       }
 
-      lastProgressPct = pct;
-      lastProgressTime = now;
-
-      const bar = renderProgressBar(pct, message);
-      await log(bar);
-
-      if (progressToken && extra.sendNotification) {
-        try {
-          await extra.sendNotification({
-            method: "notifications/progress",
-            params: {
-              progressToken,
-              progress,
-              total,
-              ...(message && { message }),
-            },
-          });
-        } catch {
-          // Ignore errors sending progress
+      if (message && progressToken && extra.sendNotification) {
+        // Map to a friendly user-facing message (with deduplication)
+        const friendly = toFriendlyMessage(progress, message);
+        if (friendly) {
+          try {
+            await extra.sendNotification({
+              method: "notifications/progress",
+              params: {
+                progressToken,
+                progress,
+                total,
+                message: friendly,
+              },
+            });
+          } catch {
+            // Ignore errors sending progress
+          }
         }
       }
     };
@@ -455,42 +650,10 @@ server.tool(
 
     await log(`Branch: ${gitInfo.currentBranch}`);
 
-    // Step 3: Read project files (optionally use static dependency analysis)
-    let files: FileMap;
-    let usedStaticAnalysis = false;
-
-    if (args.useStaticAnalysis) {
-      await sendProgress(8, 100, "Analyzing project...");
-      try {
-        const analysisResult = await analyzeProjectDependencies(dir, undefined, gitInfo.baseBranch);
-        const localFiles = analysisResult.dependencies.localFiles;
-
-        if (localFiles.length > 0) {
-          await sendProgress(10, 100, "Gathering relevant files...");
-          files = readSpecificFiles(dir, localFiles, true, true);
-          usedStaticAnalysis = true;
-        } else {
-          await sendProgress(10, 100, "Gathering project files...");
-          files = readProjectFiles(dir, true);
-        }
-      } catch (analysisError) {
-        await sendProgress(10, 100, "Gathering project files...");
-        files = readProjectFiles(dir, true);
-      }
-    } else {
-      await sendProgress(8, 100, "Gathering project files...");
-      files = readProjectFiles(dir, true);
-    }
-
-    const fileCount = Object.keys(files).length;
-    const totalSize = calculateChunkTotalSize(files);
-    const sizeMB = (totalSize / (1024 * 1024)).toFixed(2);
-    await log(`${fileCount} files (${sizeMB} MB)`);
-
-    // Step 4: Check auth
+    // Step 3: Check auth (before file reading to enable clone check)
     let authData = getAuthData();
     if (!authData) {
-      await sendProgress(10, 100, "Signing in to Inflight...");
+      await sendProgress(8, 100, "Authenticating with InFlight...");
       try {
         authData = await authenticate((msg) => log(msg));
       } catch (authError) {
@@ -501,6 +664,193 @@ server.tool(
         };
       }
     }
+
+    // Step 3b: Resolve workspace if not provided
+    // Priority: explicit arg > saved default > API lookup
+    let resolvedWorkspaceId: string | undefined = args.workspaceId || authData.defaultWorkspaceId;
+    let resolvedWorkspaceName: string | undefined;
+    if (!resolvedWorkspaceId) {
+      try {
+        await sendProgress(9, 100, "Looking up your workspaces...");
+        const wsResponse = await fetch(`${SHARE_API_URL}/share/workspaces`, {
+          headers: {
+            Authorization: `Bearer ${authData.apiKey}`,
+          },
+        });
+        if (wsResponse.ok) {
+          const wsResult = await wsResponse.json() as {
+            workspaces: Array<{ id: string; name: string; slug: string; avatarUrl: string | null }>;
+          };
+          if (wsResult.workspaces.length === 0) {
+            return {
+              content: [{ type: "text" as const, text: "Error: You don't belong to any InFlight workspaces. Please create a workspace first at https://www.inflight.co" }],
+              isError: true,
+            };
+          } else {
+            // Auto-select first workspace (user can change with set_workspace)
+            resolvedWorkspaceId = wsResult.workspaces[0].id;
+            resolvedWorkspaceName = wsResult.workspaces[0].name;
+            // Save as default so we don't look up again next time
+            authData.defaultWorkspaceId = resolvedWorkspaceId;
+            saveAuthData(authData);
+            await log(`  Auto-selected workspace: ${resolvedWorkspaceName} (${wsResult.workspaces.length} workspace${wsResult.workspaces.length > 1 ? 's' : ''} available)`);
+          }
+        }
+      } catch {
+        await log("  Workspace lookup failed, proceeding without workspace selection");
+      }
+    }
+
+    // Step 3c: Check if git clone mode is available (skip file upload if so)
+    let useGitClone = false;
+    let githubAppTip: string | null = null;
+    let branchNotPushedTip: string | null = null;
+    if (gitInfo.gitUrl && resolvedWorkspaceId) {
+      // First check: is the branch pushed to the remote?
+      if (!gitInfo.branchExistsOnRemote) {
+        await log(`  Branch "${gitInfo.currentBranch}" not found on remote — clone mode requires pushed branches`);
+        branchNotPushedTip = `Your branch "${gitInfo.currentBranch}" hasn't been pushed to the remote yet. Push it with \`git push -u origin ${gitInfo.currentBranch}\` to enable faster sharing via git clone.`;
+      } else {
+        try {
+          await sendProgress(9, 100, "Checking repository access...");
+          const checkResponse = await fetch(`${SHARE_API_URL}/share/check-clone`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${authData.apiKey}`,
+            },
+            body: JSON.stringify({
+              gitUrl: gitInfo.gitUrl,
+              workspaceId: resolvedWorkspaceId,
+            }),
+          });
+          if (checkResponse.ok) {
+            const checkResult = await checkResponse.json() as { cloneAvailable: boolean; workspaceSlug?: string };
+            useGitClone = checkResult.cloneAvailable === true;
+            if (useGitClone) {
+              await log(`  Git clone available for ${gitInfo.gitUrl}`);
+            } else if (gitInfo.gitUrl.includes("github")) {
+              // GitHub repo detected but no app installed - prompt user to install
+              await log(`  GitHub repo detected but InFlight GitHub App not installed for this workspace`);
+              const installUrl = checkResult.workspaceSlug
+                ? `https://www.inflight.co/${checkResult.workspaceSlug}/settings/integrations`
+                : "https://www.inflight.co";
+              githubAppTip = `The InFlight GitHub App is not installed for this repository. Installing it will make sharing significantly faster by cloning your repo directly instead of uploading files. Would you like to install it? Go to: ${installUrl}`;
+            }
+          }
+        } catch {
+          await log(`  Clone check failed, falling back to file upload`);
+        }
+      }
+    }
+
+    if (useGitClone) {
+      // Clone-based share: skip file reading/upload entirely
+      await sendProgress(10, 100, "Git clone available, skipping file upload...");
+
+      try {
+        const result = await callCloneShareWithSSE(
+          {
+            gitDiff: {
+              diff: gitInfo.diff,
+              diffStat: gitInfo.diffStat || '',
+              baseBranch: gitInfo.baseBranch || 'main',
+              currentBranch: gitInfo.currentBranch || 'unknown',
+            },
+            gitUrl: gitInfo.gitUrl!,
+            currentBranch: gitInfo.currentBranch || 'unknown',
+            workspaceId: resolvedWorkspaceId!,
+            existingProjectId: args.existingProjectId,
+          },
+          authData.apiKey,
+          // Remap server percentages (0-100) to our range (10-100)
+          // so progress never jumps backwards after local steps reach 10%
+          async (percentage: number, step: string) => {
+            const remapped = 10 + Math.floor((percentage / 100) * 90);
+            await sendProgress(remapped, 100, step);
+          },
+          async (message: string) => {
+            await log(`Server error: ${message}`, "error");
+          }
+        );
+
+        await sendProgress(100, 100, "Share complete!");
+        await log("========== SUCCESS (clone mode) ==========");
+        await log(`Preview URL: ${result.previewUrl}`);
+        await log(`InFlight URL: ${result.inflightUrl}`);
+
+        openInBrowser(result.inflightUrl);
+        await log("Opening InFlight in browser...");
+
+        return {
+          content: [{
+            type: "text" as const,
+            text: JSON.stringify({
+              success: true,
+              previewUrl: result.previewUrl,
+              sandboxUrl: result.sandboxUrl,
+              sandboxId: result.sandboxId,
+              inflightUrl: result.inflightUrl,
+              versionId: result.versionId,
+              projectId: result.projectId,
+              cloneMode: true,
+              diffSummary: result.diffSummary,
+              ...(resolvedWorkspaceName && { workspace: resolvedWorkspaceName }),
+            }, null, 2),
+          }],
+        };
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        await log(`Clone share failed: ${message}`, "warning");
+        await log(`Falling back to file upload...`);
+        // Fall through to standard file upload below
+      }
+    }
+
+    // Step 4: Read project files (skipped if clone succeeded above)
+    let files: FileMap;
+    let usedStaticAnalysis = false;
+
+    if (args.useStaticAnalysis) {
+      // Experimental: Use static dependency analysis to upload only relevant files
+      await sendProgress(10, 100, "Analyzing dependencies...");
+      try {
+        const analysisResult = await analyzeProjectDependencies(dir, undefined, gitInfo.baseBranch);
+        const localFiles = analysisResult.dependencies.localFiles;
+
+        await log(`  Analysis completed in ${analysisResult.metadata.analysisTimeMs}ms`);
+        await log(`  Changed files: ${analysisResult.changedFiles.length}`);
+        await log(`  UI-relevant entry points: ${analysisResult.metadata.entryPoints.length}`);
+        await log(`  Local dependencies: ${localFiles.length}`);
+        await log(`  NPM packages: ${analysisResult.dependencies.npmPackages.length}`);
+
+        if (localFiles.length > 0) {
+          await sendProgress(11, 100, `Reading ${localFiles.length} analyzed files...`);
+          files = readSpecificFiles(dir, localFiles, true, true);
+          usedStaticAnalysis = true;
+          await log(`  Using static analysis: ${Object.keys(files).length} files to upload`);
+        } else {
+          await log(`  No UI-relevant dependencies found, falling back to full upload`);
+          await sendProgress(11, 100, "Reading all project files...");
+          files = readProjectFiles(dir, true);
+        }
+      } catch (analysisError) {
+        const errorMsg = analysisError instanceof Error ? analysisError.message : String(analysisError);
+        await log(`  Static analysis failed: ${errorMsg}`, "warning");
+        await log(`  Falling back to full project upload`);
+        await sendProgress(11, 100, "Reading all project files...");
+        files = readProjectFiles(dir, true);
+      }
+    } else {
+      // Default: Read all project files
+      await sendProgress(10, 100, "Reading project files...");
+      files = readProjectFiles(dir, true);
+    }
+
+    const fileCount = Object.keys(files).length;
+    const totalSize = calculateChunkTotalSize(files);
+    const sizeMB = (totalSize / (1024 * 1024)).toFixed(2);
+    await log(`  ${usedStaticAnalysis ? "Analyzed" : "Found"} ${fileCount} files (${sizeMB} MB)`);
 
     // Step 5: Check if chunked upload is needed
     const filesAsFileMap = files as FileMap;
@@ -519,7 +869,7 @@ server.tool(
             currentBranch: gitInfo.currentBranch || 'unknown',
           },
           authData.apiKey,
-          args.workspaceId,
+          resolvedWorkspaceId,
           args.existingProjectId,
           gitInfo.gitUrl,
           async (percentage: number, step: string) => {
@@ -547,6 +897,9 @@ server.tool(
               projectId: result.projectId,
               fileCount,
               chunkedUpload: true,
+              ...(resolvedWorkspaceName && { workspace: resolvedWorkspaceName }),
+              ...(githubAppTip && { githubAppTip }),
+              ...(branchNotPushedTip && { branchNotPushedTip }),
             }, null, 2),
           }],
         };
@@ -576,13 +929,16 @@ server.tool(
             currentBranch: gitInfo.currentBranch || 'unknown',
           },
           userId: authData.userId,
-          workspaceId: args.workspaceId,
+          workspaceId: resolvedWorkspaceId,
           existingProjectId: args.existingProjectId,
           gitUrl: gitInfo.gitUrl,
         },
         authData.apiKey,
+        // Progress callback - remap server percentages (0-100) to our range (12-100)
+        // so progress never jumps backwards after local steps reach 12%
         async (percentage: number, step: string) => {
-          await sendProgress(percentage, 100, step);
+          const remapped = 12 + Math.floor((percentage / 100) * 88);
+          await sendProgress(remapped, 100, step);
         },
         async (message) => {
           await log(`Error: ${message}`, "error");
@@ -607,6 +963,9 @@ server.tool(
             projectId: result.projectId,
             fileCount,
             diffSummary: result.diffSummary,
+            ...(resolvedWorkspaceName && { workspace: resolvedWorkspaceName }),
+            ...(githubAppTip && { githubAppTip }),
+              ...(branchNotPushedTip && { branchNotPushedTip }),
           }, null, 2),
         }],
       };
@@ -736,6 +1095,103 @@ async function callShareWithSSE(
   }
 
   throw new Error("Share stream ended without completion");
+}
+
+/**
+ * Call the /share/clone endpoint with SSE streaming (git clone-based share)
+ */
+interface CloneShareRequest {
+  gitDiff: {
+    diff: string;
+    diffStat: string;
+    baseBranch: string;
+    currentBranch: string;
+  };
+  gitUrl: string;
+  currentBranch: string;
+  workspaceId: string;
+  existingProjectId?: string;
+}
+
+async function callCloneShareWithSSE(
+  request: CloneShareRequest,
+  apiKey: string,
+  onProgress: (percentage: number, step: string) => Promise<void>,
+  onError: (message: string) => Promise<void>
+): Promise<ShareResult> {
+  const url = `${SHARE_API_URL}/share/clone`;
+
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "text/event-stream",
+      Authorization: `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify(request),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Clone share failed (${response.status}): ${errorText || "Empty response"}`);
+  }
+
+  // Process SSE stream (same as callShareWithSSE)
+  const reader = response.body?.getReader();
+  if (!reader) {
+    throw new Error("No response body");
+  }
+
+  const decoder = new TextDecoder();
+  let buffer = "";
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+
+    buffer += decoder.decode(value, { stream: true });
+    const lines = buffer.split("\n");
+    buffer = lines.pop() || "";
+
+    let currentEvent = "";
+    for (const line of lines) {
+      if (line.startsWith("event: ")) {
+        currentEvent = line.slice(7).trim();
+      } else if (line.startsWith("data: ")) {
+        try {
+          const data = JSON.parse(line.slice(6));
+
+          if (currentEvent === "progress" || (!currentEvent && data.step)) {
+            const pct = data.percentage || 0;
+            const step = data.step || "Processing...";
+            await onProgress(pct, step);
+          } else if (currentEvent === "complete") {
+            return {
+              inflightUrl: data.inflightUrl,
+              versionId: data.versionId,
+              projectId: data.projectId,
+              sandboxId: data.sandboxId,
+              sandboxUrl: data.sandboxUrl,
+              previewUrl: data.previewUrl || data.sandboxUrl,
+              ngrokUrl: data.ngrokUrl,
+              diffSummary: data.diffSummary,
+            };
+          } else if (currentEvent === "error") {
+            await onError(data.message || "Clone share failed");
+            throw new Error(data.message || "Clone share failed");
+          }
+        } catch (e) {
+          if (e instanceof Error && e.message !== "Clone share failed") {
+            continue;
+          }
+          throw e;
+        }
+        currentEvent = "";
+      }
+    }
+  }
+
+  throw new Error("Clone share stream ended without completion");
 }
 
 /**
